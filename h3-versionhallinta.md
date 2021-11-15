@@ -102,7 +102,11 @@ Komennolla saa selville tehdyt muokkaukset ja sen, kuka ne on tehnyt ja milloin.
 
 **c) Huppis! Tee tyhmä muutos gittiin, älä tee commit:tia. Tuhoa huonot muutokset ‘git reset --hard’. Huomaa, että tässä toiminnossa ei ole peruutusnappia.**
 
+Loin tiedoston tyhmatiedosto.md ja syötin komennon `git add --all` tämän jälkeen status näytti komennolla `git status` seuraavalta:
+Statuksesta näin, että uusi tiedosto `tyhmatiedosto.md` odotti commitia. En kuitenkaan halunnut, että tiedosto viedään Gittiin, joten syötin komennon `git reset --hard`, joka tyhjentää kaikki tehdyt muutokset. Komennon jälkeen syöte kertoi, että HEAD -commit on edellinen tekemäni commit. Statusta tarkistaessa `tyhmatiedosto.md` oli myös poistunut odottamasta commitia:
 
+<h3_10_c.png>
 
 **d) Formula. Tee uusi salt-tila (formula, moduli, infraa koodina). (Eli uusi tiedosto esim. /srv/salt/terontila/init.sls). Voit tehdä ihan yksinkertaisen parin funktion (pkg, file...) tilan, tai edistyneemmin asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman. Käytä tarvittaessa ‘find -printf “%T+ %p\n”|sort’ löytääksesi uudet asetustiedostot.**
+
 
