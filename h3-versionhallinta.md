@@ -50,7 +50,28 @@ toi hakemistoon Githubista löytyvät `LICENSE, README.md, h3-versionhallinta.md
 **b) Pull first. Tee useita muutoksia git-varastoosi. Tee muutama muutos, 
 jossa yksi commit koskee useampaa tiedostoa. Anna hyvä kuvaukset 
 (commit message), yksi englanninkielinen lause imperatiivissa (määräysmuodossa) 
-"Add top level menu to Foobar synchronizer"**
+"Add top level menu to Foobar synchronizer"** klo. 19.00
+
+Aluksi vedin Githubista Gitin ajantasalle komennolla `git pull`. 
+Tämän jälkeen tein muutoksia tiedostoihin `README.md`ja `h3-palvelintenhallinta.md`. Lisäksi
+loin hakemiston `~/palvelintenhallinta/screenshots`.
+
+Muutosten jälkeen syötin komennon `git add --all`. Tarkistin komennolla `git status` miltä tilanne näytti 
+Gitissä ennen committia:
+
+<h3_2_b.png>
+
+Kuten kuvasta näkyy, muokkaukset tiedostoihin odottivat committia, mutta luotua hakemistoa ei näkynyt.
+Päätin kuitenkin tehdä commitit muokatuille tiedostoille ja pushata ne Githubiin ja sen jälkeen selvittää, miksei hakemisto ilmestynyt status -tietoihin.
+
+Komennolla `git commit` avautui nano, johon kirjoitin mitä olin muokannut. Komennolla 
+`git push`pushasin muutokset Githubiin. Kommennolla `git log` tarkastelin edellisiä committeja:
+
+<h3_3_b.png>
+
+Tiedostojen muokkaukset päivittyivät Githubiin, muttei luomani hakemisto. Löysin seuraavan
+ohjeen: [Create Folder in GitHub: A Guide](https://careerkarma.com/blog/git-create-folder-in-github/), josta selvisi, että Git ei vie tyhjä hakemistoja kansioina Githubiin, vaan niissä täytyy olla sisältöä. Lisäsin screenshots-hakemistoon vielä tyhjän empty.md-tiedoston, additin, commitin ja pushashin tämän jälkeen hakemiston onnistuneesti Githubiin.
+
 
 **b) Kaikki kirjataan. Näytä omalla git-varastollasi esimerkit komennoista ‘git log’, ‘git diff’ ja ‘git blame’. Selitä tulokset.**
 
