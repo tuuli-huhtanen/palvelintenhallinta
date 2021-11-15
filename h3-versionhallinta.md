@@ -41,7 +41,7 @@ Tämän jälkeen loin Debianissa hakemiston `~/palvelintenhallinta`. Ajoin hakem
 komennon `git init`, jolla loin hakemistoon Git-versionhallinnan. 
 
 Olin jo aiemmin asentanut SSH-avainparit, joten loin yhteyden Githubissa sijaitsevan
-'palvelinten-hallinta' repositorioon komennolla `git remote add origin git@github.com:tuuli-huhtanen/palvelintenhallinta.git` 
+'palvelinten-hallinta' repositorioon komennolla `git remote add origin git@github.com:tuuli-huhtanen/palvelintenhallinta.git`. 
 
 Tämän jälkeen toin Githubissa olevan repositorion komennolla `git pull`, joka
 toi hakemistoon Githubista löytyvät `LICENSE, README.md, h3-versionhallinta.md`
@@ -52,3 +52,8 @@ jossa yksi commit koskee useampaa tiedostoa. Anna hyvä kuvaukset
 (commit message), yksi englanninkielinen lause imperatiivissa (määräysmuodossa) 
 "Add top level menu to Foobar synchronizer"**
 
+**b) Kaikki kirjataan. Näytä omalla git-varastollasi esimerkit komennoista ‘git log’, ‘git diff’ ja ‘git blame’. Selitä tulokset.**
+
+**c) Huppis! Tee tyhmä muutos gittiin, älä tee commit:tia. Tuhoa huonot muutokset ‘git reset --hard’. Huomaa, että tässä toiminnossa ei ole peruutusnappia.**
+
+**d) Formula. Tee uusi salt-tila (formula, moduli, infraa koodina). (Eli uusi tiedosto esim. /srv/salt/terontila/init.sls). Voit tehdä ihan yksinkertaisen parin funktion (pkg, file...) tilan, tai edistyneemmin asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman. Käytä tarvittaessa ‘find -printf “%T+ %p\n”|sort’ löytääksesi uudet asetustiedostot.**
