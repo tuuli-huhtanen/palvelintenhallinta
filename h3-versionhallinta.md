@@ -20,3 +20,16 @@ Tässä z-alakohdassa ei tarvitse siis tehdä testejä tietokoneella.
 * Commonmark contributors: [Markdown Reference](https://commonmark.org/help/) 
 (huomaa ainakin otsikot risuaidoilla, kappalejako tyhjällä rivillä,
  sisennys (tab) koodia, lista, linkki, kuva.
+
+Artikkeli käsittelee Markdownin perussyntakseja. Tässä koottuna tiivistetysti
+usein käytetyt:
+
+* Lista: `* Lista`
+* **Paksunnettu** ja *Kursivoitu*: `**Paksunnettu** *Kursivoitu*`
+* Otsikot: `# Otsikko 1 ## Otsikko 2 ...`
+* Linkki: `[Linkki](http://osoite)`
+* Kuva: `![Image](http://kuvanosoite)`
+* Sisennetty koodi:`- merkkien väliin.
+
+
+
