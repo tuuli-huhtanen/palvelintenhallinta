@@ -59,7 +59,7 @@ loin hakemiston `~/palvelintenhallinta/screenshots`.
 Muutosten jälkeen syötin komennon `git add --all`. Tarkistin komennolla `git status` miltä tilanne näytti 
 Gitissä ennen committia:
 
-<h3_2_b.png>
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_2_b.png)
 
 Kuten kuvasta näkyy, muokkaukset tiedostoihin odottivat committia, mutta luotua hakemistoa ei näkynyt.
 Päätin kuitenkin tehdä commitit muokatuille tiedostoille ja pushata ne Githubiin ja sen jälkeen selvittää, miksei hakemisto ilmestynyt status -tietoihin.
@@ -67,15 +67,14 @@ Päätin kuitenkin tehdä commitit muokatuille tiedostoille ja pushata ne Github
 Komennolla `git commit` avautui nano, johon kirjoitin mitä olin muokannut. Komennolla 
 `git push`pushasin muutokset Githubiin. Kommennolla `git log` tarkastelin edellisiä committeja:
 
-<h3_3_b.png>
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_3_b.png)
 
 Tiedostojen muokkaukset päivittyivät Githubiin, muttei luomani hakemisto. Löysin seuraavan
 ohjeen: [Create Folder in GitHub: A Guide](https://careerkarma.com/blog/git-create-folder-in-github/), josta selvisi, että Git ei vie tyhjä hakemistoja kansioina Githubiin, vaan niissä täytyy olla sisältöä. Lisäsin screenshots-hakemistoon vielä tyhjän empty.md-tiedoston, additin, commitin ja pushashin tämän jälkeen hakemiston onnistuneesti Githubiin.
 
-<h3_5_b>
-
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_5_b.png)
+_
 Kuten ylläolevasta kuvasta huomaa, tyhjän tiedoston lisäyksen jälkeen myös hakemisto ilmeistyi Gittiin työstettäväksi.
-
 
 **b) Kaikki kirjataan. Näytä omalla git-varastollasi esimerkit komennoista ‘git log’, ‘git diff’ ja ‘git blame’. Selitä tulokset.**
 
@@ -83,29 +82,28 @@ Muokkasin tiedostoa `h3-palvelintenhallinta.md`, jonka jälkeen annoin komennon 
 Komento näyttää viimeisimmät muutokset tehdyssä tiedostossa. Alla olevasta kuvasta näkee,
 että olen korjannut toisen kappaleen kirjoitusvirheen (lisännyt puuttuva t-kirjaimen) ja lisännyt tekstiä lisää tekstiä alemmaksi:
 
-<h3_6_c.png>
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_6_c.png)
 
 Käytin jo ylemmässä harjoituksessa komentoa `git log`. Löysin samalla toteutuksella olevan [Tuomas Lintulan tekemästä harjoituksesta](https://github.com/tuomaslin/palvelintenhallinta/blob/main/MarkDown.md) komennon 
 `git log --pretty=oneline`, jolla saa tehdyt commitit yhdelle riville "siivotummin", joten päätin kokeilla sitä:
 
-<h3_7_c.png>
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_7_c.png)
 
 Huomasin, että komennolla näkyy ilmeisesti vain commitin ensimmäinen rivi, joten toisena ylhäältä olevasta commitista jää puuttumaan toinen rivi, johon kirjoitin muutokset `h3-versionhallinta.md` -tiedostoon.
-
 
 Tämän jälkeen kokeilin vielä komentoa `git blame`. Tutkin asiaa ja löysin seuraavalta sivulta erilaisia tapoja käyttää komentoa: [Git blame](https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-blame).
 
 Kokeilin komentoa `git blame -L 1,10 h3-versionhallinta.md`, joka tuo vain halutut rivit (tässä 1-10) näkyviin.
 Komennolla saa selville tehdyt muokkaukset ja sen, kuka ne on tehnyt ja milloin.
 
-<h3_8_c.png> 
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_8_c.png)
 
 **c) Huppis! Tee tyhmä muutos gittiin, älä tee commit:tia. Tuhoa huonot muutokset ‘git reset --hard’. Huomaa, että tässä toiminnossa ei ole peruutusnappia.**
 
 Loin tiedoston tyhmatiedosto.md ja syötin komennon `git add --all` tämän jälkeen status näytti komennolla `git status` seuraavalta:
 Statuksesta näin, että uusi tiedosto `tyhmatiedosto.md` odotti commitia. En kuitenkaan halunnut, että tiedosto viedään Gittiin, joten syötin komennon `git reset --hard`, joka tyhjentää kaikki tehdyt muutokset. Komennon jälkeen syöte kertoi, että HEAD -commit on edellinen tekemäni commit. Statusta tarkistaessa `tyhmatiedosto.md` oli myös poistunut odottamasta commitia:
 
-<h3_10_c.png>
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_10_c.png)
 
 **d) Formula. Tee uusi salt-tila (formula, moduli, infraa koodina). (Eli uusi tiedosto esim. /srv/salt/terontila/init.sls). Voit tehdä ihan yksinkertaisen parin funktion (pkg, file...) tilan, tai edistyneemmin asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman. Käytä tarvittaessa ‘find -printf “%T+ %p\n”|sort’ löytääksesi uudet asetustiedostot.**
 
