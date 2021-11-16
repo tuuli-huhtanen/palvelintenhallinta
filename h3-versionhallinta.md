@@ -36,6 +36,8 @@ GitHub-varastoon, jolloin md-päätteiset tiedostot muotoillaan automaattisesti.
 Tyhjä rivi tekee kappalejaon, risuaita ‘#’ tekee otsikon, sisennys merkitsee 
 koodinpätkän.**
 
+Käytin tässä apuna seuraavaa ohjetta: [Versionhallinta: Git ja Github](https://tkt-lapio.github.io/git/).
+
 Loin ensin repositorin 'palvelintenhallinta' Githubiin, johon loin h3-versionhallinta.md -tiedoston. 
 Tämän jälkeen loin Debianissa hakemiston `~/palvelintenhallinta`. Ajoin hakemistossa 
 komennon `git init`, jolla loin hakemistoon Git-versionhallinnan. 
@@ -50,7 +52,7 @@ toi hakemistoon Githubista löytyvät `LICENSE, README.md, h3-versionhallinta.md
 **b) Pull first. Tee useita muutoksia git-varastoosi. Tee muutama muutos, 
 jossa yksi commit koskee useampaa tiedostoa. Anna hyvä kuvaukset 
 (commit message), yksi englanninkielinen lause imperatiivissa (määräysmuodossa) 
-"Add top level menu to Foobar synchronizer"** klo. 19.00
+"Add top level menu to Foobar synchronizer"** klo. 19.00->
 
 Aluksi vedin Githubista Gitin ajantasalle komennolla `git pull`. 
 Tämän jälkeen tein muutoksia tiedostoihin `README.md`ja `h3-palvelintenhallinta.md`. Lisäksi
@@ -73,7 +75,7 @@ Tiedostojen muokkaukset päivittyivät Githubiin, muttei luomani hakemisto. Löy
 ohjeen: [Create Folder in GitHub: A Guide](https://careerkarma.com/blog/git-create-folder-in-github/), josta selvisi, että Git ei vie tyhjä hakemistoja kansioina Githubiin, vaan niissä täytyy olla sisältöä. Lisäsin screenshots-hakemistoon vielä tyhjän empty.md-tiedoston, additin, commitin ja pushashin tämän jälkeen hakemiston onnistuneesti Githubiin.
 
 ![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_5_b.png)
-_
+
 Kuten ylläolevasta kuvasta huomaa, tyhjän tiedoston lisäyksen jälkeen myös hakemisto ilmeistyi Gittiin työstettäväksi.
 
 **b) Kaikki kirjataan. Näytä omalla git-varastollasi esimerkit komennoista ‘git log’, ‘git diff’ ja ‘git blame’. Selitä tulokset.**
@@ -107,4 +109,4 @@ Statuksesta näin, että uusi tiedosto `tyhmatiedosto.md` odotti commitia. En ku
 
 **d) Formula. Tee uusi salt-tila (formula, moduli, infraa koodina). (Eli uusi tiedosto esim. /srv/salt/terontila/init.sls). Voit tehdä ihan yksinkertaisen parin funktion (pkg, file...) tilan, tai edistyneemmin asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman. Käytä tarvittaessa ‘find -printf “%T+ %p\n”|sort’ löytääksesi uudet asetustiedostot.**
 
-
+En ehtinyt tehdä tehtävää ennen palautusta.
