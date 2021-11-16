@@ -109,4 +109,21 @@ Statuksesta näin, että uusi tiedosto `tyhmatiedosto.md` odotti commitia. En ku
 
 **d) Formula. Tee uusi salt-tila (formula, moduli, infraa koodina). (Eli uusi tiedosto esim. /srv/salt/terontila/init.sls). Voit tehdä ihan yksinkertaisen parin funktion (pkg, file...) tilan, tai edistyneemmin asentaa ja konfiguroida minkä vain uuden ohjelman: demonin, työpöytäohjelman tai komentokehotteesta toimivan ohjelman. Käytä tarvittaessa ‘find -printf “%T+ %p\n”|sort’ löytääksesi uudet asetustiedostot.**
 
-En ehtinyt tehdä tehtävää ennen palautusta.
+Loin uuden moduulin, jolla loin tekstitiedoston, johon lisäsin tekstin 'Hello world Minions!'. Minulla oli samassa koneessa 
+master ja yksi minion. Ajoin moduulin kaikille minioneille. 
+
+```
+$ sudo mkdir /srv/salt/harjoitusmoduuli
+$ sudoedit /srv/salt/harjoitusmoduuli/init.sls
+/tmp/helloworld.txt:
+  file.managed:
+    - name: /tmp/helloworld.txt
+    - contents: 'Hello world Minions!'
+$ sudo salt '*' state.apply harjoitusmoduuli
+```
+
+Ajo meni läpi:
+
+![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_11_d.png)
+
+
