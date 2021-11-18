@@ -91,7 +91,7 @@ Käytin jo ylemmässä harjoituksessa komentoa `git log`. Löysin samalla toteut
 
 ![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_7_c.png)
 
-Huomasin, että komennolla näkyy ilmeisesti vain commitin ensimmäinen rivi, joten toisena ylhäältä olevasta commitista jää puuttumaan toinen rivi, johon kirjoitin muutokset `h3-versionhallinta.md` -tiedostoon.
+Commitin edessä oleva kirjainnumero-sarja on commitin yksilöllinen tiiviste. Huomasin, että komennolla näkyy ilmeisesti vain commitin ensimmäinen rivi, joten toisena ylhäältä olevasta commitista jää puuttumaan toinen rivi, johon kirjoitin muutokset `h3-versionhallinta.md` -tiedostoon.
 
 Tämän jälkeen kokeilin vielä komentoa `git blame`. Tutkin asiaa ja löysin seuraavalta sivulta erilaisia tapoja käyttää komentoa: [Git blame](https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-blame).
 
@@ -122,8 +122,10 @@ $ sudoedit /srv/salt/harjoitusmoduuli/init.sls
 $ sudo salt '*' state.apply harjoitusmoduuli
 ```
 
-Ajo meni läpi:
+Ajo meni läpi:  
+
 
 ![Image](https://raw.githubusercontent.com/tuuli-huhtanen/palvelintenhallinta/main/screenshots/h3_11_d.png)
 
 
+Saltilla oli yksi minion, foo, jolle moduuli ajettiin onnistuneesti. `Succeeded = 1 (changed = 1)` eli ajo onnistui ja yksi muutos ja syötteestä nähdään muutos `diff: new file` eli tiedosto luotiin. 
