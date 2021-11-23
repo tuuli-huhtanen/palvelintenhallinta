@@ -41,7 +41,7 @@ VLC on mediasoitin, Filezilla on tiedonsiirtoon tarkoitettu ohjelma ja Calibre e
 
 Ajoin tilan komennolla `sudo salt '*' state.apply kymmenenohjelmanmoduuli` eli kaikille (tässä tapauksessa yhdelle) minioneille.
 
-[!Image](/screenshots/h4_2.png)
+![Image](/screenshots/h4_2.png)
 
 Ajo meni onnistuneesti läpi:  `Comment: 10 targeted packages were installed/updated`. Muutoksista näkee yksitellen jokainen asennettu ohjelma ja asennetun ohjelman versio.
 
@@ -49,7 +49,7 @@ Ajo meni onnistuneesti läpi:  `Comment: 10 targeted packages were installed/upd
 
 * **Anna esimerkki aikajanasta**
 
-[!Image](screenshots/h4_3.png)
+![Image](/screenshots/h4_3.png)
 
 Tulosteesta nähdään: 
 * Päivämäärä ja aika, jolloin muutos on tehty
@@ -72,7 +72,7 @@ Muutin `/etc/skel/.bashrc` tiedostoa lisäten loppuun `echo "Tervetuloa"`. Lisä
 
 Tämän jälkeen ajoin /etc/ -hakemistossa `sudo find -printf '%T+ %p\n'|sort|tail`ja kun alla olevaa tulostetta vertaa edelliseen esimerkkikuvaan komennon antamasta syötteestä, loppuun ilmestyi tieto tekemästäni muutoksesta.
 
-[!Image](./screenshots/h4_4.png)
+![Image](/screenshots/h4_4.png)
 
 Tulosteesta myös näkee, että yhtä tiedostoa on vain muutettu.
 
@@ -90,7 +90,7 @@ set tabsize 2
 
 Hain komennolla `sudo find -printf '%T+ %p\n'|sort|tail` aikajanan, jonka lopusta huomaa, että tein muutoksia nnanorc -tiedostoon:
 
-[!Image](h4_5.png)
+![Image](/screenshots/h4_5.png)
 
 Tämän jälkeen tein muutoksista Salt -tilan. Loin hakemiston `/srv/salt/nanomoduuli`, johon loin `init.sls` -tiedoston, jossa määräsin hakemaan Nanon asetustiedoston `nanorc` Saltista, eli tästä nano -moduulista:
 
@@ -102,7 +102,7 @@ Tämän jälkeen tein muutoksista Salt -tilan. Loin hakemiston `/srv/salt/nanomo
 
 Tämän jälkeen kopioin `/etc/nanorc` tiedoston `/srv/salt/nanomoduuli` -hakemistoon. Koska Nanon asetustiedostooli tällä hetkellä identtinen sekä saltin tilassa, että koneessa, koska kone oli sekä master, että minion, ei tilan ajo näyttäisi mitään muutoksia. Siksi ennen ajoa menin tekemään `/etc/nanorc` tiedostoon muutoksen, ja poistin kohdan `set tabsize 2`. Tämän jälkeen ajoin komennon `sudo salt '*' state.apply nanomoduuli`. 
 
-[!Image](h4_6.png)
+![Image](screenshots/h4_6.png)
 
 Tulosteesta näkee, että muutoksia `/etc/nanorc` -tiedostoon on tehty: `+set tabsize 2`. Eli äsken koneelta poistamani asetus ajettiin takaisin, sillä se löytyi Salt-tilasta.  
 
