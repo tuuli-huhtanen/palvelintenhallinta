@@ -41,7 +41,7 @@ VLC on mediasoitin, Filezilla on tiedonsiirtoon tarkoitettu ohjelma ja Calibre e
 
 Ajoin tilan komennolla `sudo salt '*' state.apply kymmenenohjelmanmoduuli` eli kaikille (tässä tapauksessa yhdelle) minioneille.
 
-[!Image](./screenshots/h4_2.png)
+[!Image](/screenshots/h4_2.png)
 
 Ajo meni onnistuneesti läpi:  `Comment: 10 targeted packages were installed/updated`. Muutoksista näkee yksitellen jokainen asennettu ohjelma ja asennetun ohjelman versio.
 
@@ -49,7 +49,7 @@ Ajo meni onnistuneesti läpi:  `Comment: 10 targeted packages were installed/upd
 
 * **Anna esimerkki aikajanasta**
 
-[!Image](./screenshots/h4_3.png)
+[!Image](screenshots/h4_3.png)
 
 Tulosteesta nähdään: 
 * Päivämäärä ja aika, jolloin muutos on tehty
