@@ -115,7 +115,7 @@ Tulosteesta näkee, että muutoksia `/etc/nanorc` -tiedostoon on tehty: `+set ta
 Tein tämän harjoituksen keskiviikkona 24.11.2021. Tutkin eri ohjelmia ja päädyin asentamaan [Taskwarrior](https://taskwarrior.org):in, joka on nimensä mukaisesti on ohjelma, johon voi laittaa to-do tehtäviä ja hallinnoida niitä. Ensin loin `/srv/salt/taskwarrior`-hakemiston, johon loin tiedoston `init.sls` ja ohjelmoin tiedoston asentamaan Taskwarriorin sekä hakemaan Taskwarriorin asetustiedoston `.taskrc` hakemistosta `/srv/salt/taskwarrior`. 
 
 ```
-$ sudoedit /srv/salt/taskwarrior/init.sls`
+$ sudoedit /srv/salt/taskwarrior/init.sls
 
  1 taskwarrior:
  2   pkg.installed
@@ -163,7 +163,7 @@ include /usr/local/share/doc/task/rc/dark-gray-256.theme
 
 Tämän jälkeen loin uuden käyttäjän `testi01` ja kirjauduin sisään ssh:lla `ssh testi01@localhost`. Uuden käyttäjän sen takia, että `/etc/skel` hakemistosta kopioidaan sisältö aina uuden käyttäjän kotihakemistoon. Katsoin testikäyttäjän kotihakemiston listauksen, ja sinne oli luotu `.taskrc`. Kokeilin luoda uuden taskin komennolla `task add`, mutta kuten allaolevasta kuvasta näkee, en pystynyt.
 
-![Image](h4_10.png) 
+![Image](screenshots/h4_10.png) 
 
 Syöte antaa virheilmoituksen `Could not read include file '/usr/local/share/doc/task/rc/dark-gray-256.theme`. Seuraavaksi poistin testi01 -käyttäjältä `.taskrc` -tiedoston ja kokeilin lisätä uudestaan `task add`-komennolla taskin. Tällöin ohjelma kertoi, ettei `.taskrc` -tiedostoa löydy ja luodaanko sellainen:
 
