@@ -108,7 +108,7 @@ Tämän jälkeen kopioin `/etc/nanorc` tiedoston `/srv/salt/nanomoduuli` -hakemi
 
 Tulosteesta näkee, että muutoksia `/etc/nanorc` -tiedostoon on tehty: `+set tabsize 2`. Eli äsken koneelta poistamani asetus ajettiin takaisin, sillä se löytyi Salt-tilasta.  
 
-
+**25.11.2021 Edit:** Tässä harjoituksessa olisi pitänyt ensin kokeilla muutokset paikallisesti, ennen ajamista kaikille. Lisäksi paikallisesti olisi pitänyt ensin testata, että muutokset toimivat. Selventävä kuva lopputuloksesta puuttuu myös.
 
 **d) Asenna jokin toinen ohjelma asetuksineen.**
 
@@ -218,4 +218,6 @@ Tämän jälkeen loin uuden testikäyttäjän `testi02` ja kirjauduin sisään s
 
 ![Image](screenshots/h4_12.png)
 
-Tarinan opetus oli se, että minun olisi pitänyt ensin testata `.taskrc` -tiedoston ja Taskwarriorin toimintaa paikallisesti ennen Saltilla automatisointia, mutta sain asian suhteellisen helposti korjattua. Ongelmaksi tässä lienee se, ettei `/etc/skel`:in kautta päivitys ilmeisesti päivity jo olemassa oleville käyttäjille?
+Tarinan opetus oli se, että minun olisi pitänyt ensin testata `.taskrc` -tiedoston ja Taskwarriorin toimintaa paikallisesti ennen Saltilla automatisointia, mutta sain asian suhteellisen helposti korjattua. Ongelmaksi tässä lienee se, ettei `/etc/skel`:in kautta päivitys ilmeisesti päivity jo olemassa oleville käyttäjille? Edit: 25.11.2021. Se ei itse asiassa ole ongelma, sillä tarkoitus ei ole muutenkaan muuttaa jo olemassaolevien käyttäjien tekemiä omia asetustiedostoja (aiheuttaa hämmennystä), joten parempi ajaa muutokset jatkossa uusille käyttäjäille, kuten tässä harjoituksessa tein.
+
+**25.11.2021 Edit:**  Eli ennen tilan ajoa kaikille minioneille, olisin voinut testata paikallisesti joko ihan puhtaasti omassa kotihakemistossani Taskwarriorin toimintaa ja `~/.tascr`-tiedoston asetuksien muokkaamista tai paikallisesti Salt-tilaa  komennolla `sudo salt --local state.apply taskwarrior`ja testata, että halutukset muutokset toimii ja vasta tämän jälkeen ajaa muutokset kaikille. 
