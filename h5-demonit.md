@@ -272,11 +272,160 @@ tuuli@debian2:~$
 
 **b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii. Siivoa sshd_configista turhat kommenttirivit. Laita tiedostoon kommentti, jossa varoitetaan, että tiedosto ylikirjoittuu automaattisesti. Liitä siivottu sshd_config vastaukseesi.**
 
-Tässä vaiheessa harjoitusta en saanut enää yhteyttä minioneihi, joten päätin palata harjoituksen alussa olevaan master-koneeseen ja minion-koneeseen debian2 (en ollut epähuomiossa ottanut ubuntus1- snapshottia, joten jätin sen pois jatkosta).
+Tässä vaiheessa harjoitusta en saanut enää yhteyttä minioneihin, joten päätin palata harjoituksen alussa olevaan master-koneeseen ja minion-koneeseen debian2 (en ollut epähuomiossa ottanut ubuntus1- snapshottia, joten jätin sen pois jatkosta).
 
+Kun yhteydet olivat kunnossa (master: debian1, minion: debian2). Jatkoin harjoitusta niin, että minulla oli luotuna `/srv/salt/ssh`-hakemisto, jossa oli edellisestä harjoituksesta init.sls ja muokkaamaton sshd_config -tiedosto.
 
+Päätin lisätä bannerin, joten lisäsin `/srv/salt/ssh/sshd_config` tiedostoon kohdan: `Banner /etc/ssh/sshd-banner`, jonka jälkeen loin `/srv/salt/ssh/sshd-banner` tiedoston, johon kirjoitin "Tämä on banneri". Apuna käytin seuraavaa ohjetta: [HowTo: Set a Warning Message (Banner) in SSH](https://www.shellhacks.com/setup-warning-message-banner-ssh/).  Tämän jälkeen muokkasin init.sls -tiedoston näyttämään seuraavalta:
+
+```
+ 1 openssh-server:
+ 2   pkg.installed
+ 3
+ 4 /etc/ssh/sshd_config:
+ 5   file.managed:
+ 6     - source: salt://ssh/sshd_config
+ 7
+ 8 /etc/ssh/sshd-banner:
+ 9   file.managed:
+10     - source: salt://ssh/sshd-banner
+11 
+12 sshd:
+13   service.running:
+14     - enable: True
+15     - watch:
+16       - file: /etc/ssh/sshd_config
+```
+
+Tämän jälkeen siivosin vielä `/srv/salt/sshd_config`-tiedoston tunnilla näytetyllä tavalla. Ennen siivousta otin tiedostosta kopion.
+
+```
+cat sshd_config |grep -v ^#|grep -v ^$| sudo tee sshd_configtmp sudo mv sshd_configtmp sshd_config
+```
+
+* cat sshd_config = lukee tiedoston sisällön
+* grep -v ^# = valitsee kaikki risuaidat ja poistaa ne
+* grep -v ^$ = valitsee kaikki tyhjät rivivaihdot ja poistaa ne
+* sudo tee sshd_configtmp = tekee tuon nimisen tiedoston ja kirjoittaa sinne cat -tuloste (joka tässä tulee ilman risuaitoja ja rivivälejä)
+* sudo mv  = siirtää väliaikaisen tiedoston sisällön oikeaan
+
+Lopulta `/srv/salt/ssh/sshd_config` tiedosto näytti tältä:
+
+```
+ 1 Include /etc/ssh/sshd_config.d/*.conf
+ 2 ChallengeResponseAuthentication no
+ 3 UsePAM yes
+ 4 X11Forwarding yes
+ 5 PrintMotd no
+ 6 Banner /etc/ssh/sshd-banner
+ 7 AcceptEnv LANG LC_*
+ 8 Subsystem       sftp    /usr/lib/openssh/sftp-server
+```
+
+Tämän jälkeen testasin paikallisesti:
+
+```
+sudo salt-call --local state.apply ssh
+```
+
+![Image](screenshots/H5_9.png) 
+
+Bannerin tekstiohjaus ei mennyt läpi. Jostain syystä ko. tiedostoa ei ollut Saltin juuressa. No, tein sen uudestaan sinne. Ajoin uudelleen paikallisesti tilan:
+
+```
+tuuli@debian1:~$ sudo salt-call --local state.apply ssh --state-output=terse
+local:
+  Name: openssh-server - Function: pkg.installed - Result: Clean Started: - 19:34:10.807279 Duration: 55.166 ms
+  Name: /etc/ssh/sshd_config - Function: file.managed - Result: Clean Started: - 19:34:10.864481 Duration: 19.174 ms
+  Name: /etc/ssh/sshd-banner - Function: file.managed - Result: Changed Started: - 19:34:10.883751 Duration: 3.242 ms
+  Name: sshd - Function: service.running - Result: Clean Started: - 19:34:10.887668 Duration: 20.239 ms
+
+Summary for local
+------------
+Succeeded: 4 (changed=1)
+Failed:    0
+------------
+Total states run:     4
+Total run time:  97.821 ms
+```
+
+Nyt meni läpi. Seuraavasti kokeilin localhostina:
+
+```
+tuuli@debian1:~$ ssh tuuli@localhost
+Tämä on banneri
+tuuli@localhost's password: 
+Linux debian1 5.10.0-9-amd64 #1 SMP Debian 5.10.70-1 (2021-09-30) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Mon Nov 29 21:44:58 2021 from 192.168.1.190
+```
+
+Toimi. Lopuksi ajoin minionille:
+
+![Image](screenshots/H5_10.png)
+
+Ajo meni läpi, myöskin testi, jossa kirjaudun ssh:llä minionille. Myös bannerin teksti tuli näkyviin.
 
 **c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen. Korvaa testisivu /var/www/html/index.html sivulla, jossa lukee vain "Hello".**
+
+Aloitin harjoituksen luomalla hakemiston `/srv/salt/apache` ja sinne tiedoston `init.sls`. Käytin harjoituksessa apunanin [Janne Mustosen oma moduuli -harjoitusta](https://jannelinux.design.blog/2020/05/19/oma-moduuli-h7/).
+
+Loin seuraavanlaisen init.sls tiedoston:
+
+```
+1 apache2:
+ 2   pkg.installed
+ 3
+ 4 /var/www/html/index.html:
+ 5   file.managed:
+ 6     - source: salt://apache/index.html
+ 7
+ 8 apache2service:
+ 9   service.running:
+10     - name: apache2
+11     - enable: True
+```
+
+Tämän jälkeen loin tyhjän HTML-sivun `/srv/salt/apache/index.html` ja loin sisään HTML-rakenteen ja kirjoitin "Hello":
+
+```
+ 1 <html>
+ 2 <head>
+ 3 </head>
+ 4
+ 5 <body>
+ 6 <p> Hello </p>
+ 7 </body>
+ 8
+ 9 </html>
+10
+```
+
+Ensin testasin paikallisesti:
+
+![Image](screenshots/H5_11.png)
+
+Kaikki meni läpi. Sen jälkeen testasin: (Löysin [Tatu Anttilan harjoituksesta tavan](https://taanttila.wordpress.com/palvelintenhallinta/#h5). 
+
+![Image](screenshots/H5_12.png)
+
+Sen jälkeen ajoin minioille komennolla: 
+
+```
+sudo salt *'* state.apply apache
+```
+
+Meni onnistuneesti läpi. Testasin kirjautumalla ssh:lla minionille, katsoin `curl localhost` komennolla, mitä etusivulta löytyy ja lopuksi katsoin, onko apache käynnissä:
+
+![Image](screenshots/H5_13.png)
+
+Kaikki vaikutti olevan kunnossa, apache oli päällä ja oletussivu luotu.
 
 **d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille. Voit laittaa kotisivut päälle 'a2enmod userdir', ottaa /etc/-tiedostoista aikajanan ja tehdä tarvittavat symlinkit file.symlink.**
 
