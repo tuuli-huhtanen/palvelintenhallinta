@@ -492,4 +492,145 @@ Kyllä oli. mod_userdir -moduulit oli luotu myös sinne symlinkin avulla.
 
 **e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa. Katso, että sivuille tulee oikea omistaja. Vinkki: /etc/skel/ kopioidaan luoduille käyttäjille. Kotisivuja etsitään osoitteesta /home/tero/public_html/index.html.**
 
+Käyttäjän kotisivut sijaitsevat käyttäjän kotihakemistossa, johon käyttäjän tulee luoda hakemist `public_html`. Vaikka usrdir-moduuli olisi otettu käyttöön, se ei vielä luo `public_html` hakemistoa käyttäjän kotihakemistoon.
+
+Aloitin harjoituksen muokkaamalla `/srv/salt/apache/init.sls` -tiedostoa:
+
+```
+ 1 apache2:
+ 2   pkg.installed
+ 3
+ 4 /var/www/html/index.html:
+ 5   file.managed:
+ 6     - source: salt://apache/index.html
+ 7
+ 8 apache2service:
+ 9   service.running:
+10     - name: apache2
+11     - enable: True
+12     - watch:
+13       - file: /etc/apache2/mods-enabled/userdir.conf
+14       - file: /etc/apache2/mods-enabled/userdir.load
+15
+16 /etc/apache2/mods-enabled/userdir.conf:
+17   file.symlink:
+18     - target: /etc/apache2/mods-enabled/userdir.conf
+19
+20 /etc/apache2/mods-enabled/userdir.load:
+21   file.symlink:
+22     - target: /etc/apache2/mods-enabled/userdir.load
+23
+24 /etc/skel/public_html/index.html:
+25   file.managed:
+26     - source: salt://apache/public_html/index.html
+```
+
+* Rivi 24: Sijainti, mihin tiedosto viedään minionilla. Tässä se viedään`etc/skel/`-hakemistoon, koska `public_html/index.html` halutaan viedä käyttäjän kotihakemistoon ja se onnistuu skel:in kautta. 
+* Rivi: 26: Polku Saltin juureen, jossa haluttu hakemisto ja sivusto on.
+Seuraavaksi loin hakemiston ja  tiedoston `/srv/salt/apache/public_html/index.html`, johon löysin [Tero Karvisen sivuilta yksinkertaisen HTML5 -pohjan](https://terokarvinen.com/2012/short-html5-page/?fromSearch=HTML)
+Pohja näytti seuraavalta:
+
+![Image](screenshots/H5_18.jpg)
+
+Seuraavaksi testasin paikallisesti, miten tila käyttäytyy:
+
+```
+tuuli@debian1:~$ sudo salt-call --local state.apply apache --state-output=terse
+[ERROR   ] Source file salt://public_html/index.html not found in saltenv 'base'
+local:
+  Name: apache2 - Function: pkg.installed - Result: Clean Started: - 22:12:59.732402 Duration: 53.156 ms
+  Name: /var/www/html/index.html - Function: file.managed - Result: Clean Started: - 22:12:59.788891 Duration: 20.081 ms
+  Name: /etc/apache2/mods-enabled/userdir.conf - Function: file.symlink - Result: Clean Started: - 22:12:59.810475 Duration: 1.184 ms
+  Name: /etc/apache2/mods-enabled/userdir.load - Function: file.symlink - Result: Clean Started: - 22:12:59.811720 Duration: 0.907 ms
+  Name: apache2 - Function: service.running - Result: Clean Started: - 22:12:59.812752 Duration: 19.051 ms
+  Name: /etc/skel/public_html/index.html - Function: file.managed - Result: Failed Started: - 22:12:59.831973 Duration: 2.066 ms
+
+Summary for local
+------------
+Succeeded: 5
+Failed:    1
+------------
+Total states run:     6
+Total run time:  96.445 ms
+```
+
+Eli `/etc/skel/public_html/index.html` luonti ei onnistunut. Selvitin asiaa ja löysin [Tatu Anttilan harjoituksesta](https://taanttila.wordpress.com/palvelintenhallinta/#h5), että jos luodaan hakemistoa, täytyy antaa lupa luoda hakemistoja. [SaltStack: salt.states.file.directory](https://docs.saltproject.io/en/latest/ref/states/all/salt.states.file.html#salt.states.file.directory) onkin kohta, jossa kerrotaan, että jos tiedosto sijaitsee polussa, jonka hakemistoa ei löydy kohdehakemistosta, tila ei mene läpi. Eli täytyy luoda hakemisto asettamalla `makedirs: True`:
+
+```
+ 1 apache2:
+ 2   pkg.installed
+ 3
+ 4 /var/www/html/index.html:
+ 5   file.managed:
+ 6     - source: salt://apache/index.html
+ 7
+ 8 apache2service:
+ 9   service.running:
+10     - name: apache2
+11     - enable: True
+12     - watch:
+13       - file: /etc/apache2/mods-enabled/userdir.conf
+14       - file: /etc/apache2/mods-enabled/userdir.load
+15
+16 /etc/apache2/mods-enabled/userdir.conf:
+17   file.symlink:
+18     - target: /etc/apache2/mods-enabled/userdir.conf
+19
+20 /etc/apache2/mods-enabled/userdir.load:
+21   file.symlink:
+22     - target: /etc/apache2/mods-enabled/userdir.load
+23
+24 /etc/skel/public_html/index.html:
+25   file.managed:
+26     - source: salt://apache/public_html/index.html
+27     - makedirs: true
+```
+
+* Riville 27 lisättiin `makedirs: true`
+
+Kokeilin ajaa paikallisesti uudestaan:
+
+```
+----------
+          ID: /etc/skel/public_html/index.html
+    Function: file.managed
+      Result: True
+     Comment: File /etc/skel/public_html/index.html updated
+     Started: 22:24:11.665905
+    Duration: 11.203 ms
+     Changes:   
+              ----------
+              diff:
+                  New file
+              mode:
+                  0644
+
+Summary for local
+------------
+Succeeded: 6 (changed=1)
+Failed:    0
+```
+
+Kaikki meni läpi. Testaukseen loin uuden käyttäjän `sudo adduser testi1`. Katsoin onko hakemisto ja tiedosto luotu:
+
+![Image](screenshots/H5_20.png) 
+
+Oli luotu. Yritin päästä verkkoselaimella tarkastelemaan sivustoa osoitteella: http://localhost/~testi1, mutta sivusto ei avautunut. Tutkin asiaa, ja kyse on ilmeisesti apachen asetuksista. En jatkanut harjoitusta tästä pidemmälle tänään, jatkan myöhemmin.
+
+Edit: En myöskään ajanut minioneille tätä harjoitusta, mutta se toimi masterilla. Harjoitusta voisi tosiaan jatkaa tutkimalla, miten webbisivun saa näkyviin ja sitten ajaa ja testata minioneilla. 
+
+
 **f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen. Vinkki: ensin käsin, vasta sitten automaattisesti. Tässä tehtävässä osa haastetta on selvittää, miten nginx otetaan käyttöön.**
+
+Koska Nginx-palvelin ei ollut minulle entuudestaan tuttu, asensin sen ensin itse master -koneelle. Käytin apunani [Ubuntu: Install and configure Nginx](https://ubuntu.com/tutorials/install-and-configure-nginx#1-overview).
+
+```
+tuuli@debian1:~$ sudo apt-get update
+tuuli@debian1:~$ sudo apt-get install nginx
+```
+
+Myös nginx vie oletusivun `/var/www/html` -hakemistoon kuten apachekin ja koska apapache on jo asennettuna masterilla ja siellä on oletuskotisivu tehtynä, nginx ei ylikirjoittanut olemassa olevaa sivua ja siten selaimella localhost -osoitteella näkyi edelleen edellinen apachella luomani kotisivu.
+
+Tähän lopetin harjoituksen tiistaina 30.11.2021 klo 23.00 ja päätin jatkaa myöhemmin.
+
+
