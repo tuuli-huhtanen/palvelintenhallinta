@@ -8,7 +8,7 @@ Windows 11 -käyttöjärjestelmällä ja koneelle asennetun Oracle VirtualBox (6
 Debian 11 “bullseye”.
 
 Harjoitus perustuu Tero Karvisen antamaan ohjeistukseen, joka löytyy
-[kurssisivulta](https://terokarvinen.com/2021/configuration-management-systems-palvelinten-hal>
+[kurssisivulta](https://terokarvinen.com/2021/configuration-management-systems-palvelinten-hallinta-ict4tn022-2021-autumn/)
 Harjoituksen välivaiheiden tiedot perustuvat Teron Karvisen antamiin
 ohjeistuksiin, ellei lähdettä ole toisin merkitty.
 
