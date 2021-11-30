@@ -411,7 +411,7 @@ Ensin testasin paikallisesti:
 
 ![Image](screenshots/H5_11.png)
 
-Kaikki meni läpi. Sen jälkeen testasin: (Löysin [Tatu Anttilan harjoituksesta tavan](https://taanttila.wordpress.com/palvelintenhallinta/#h5). 
+Kaikki meni läpi. Sen jälkeen testasin: (Löysin [Tatu Anttilan harjoituksesta tavan](https://taanttila.wordpress.com/palvelintenhallinta/#h5)). 
 
 ![Image](screenshots/H5_12.png)
 
@@ -428,6 +428,67 @@ Meni onnistuneesti läpi. Testasin kirjautumalla ssh:lla minionille, katsoin `cu
 Kaikki vaikutti olevan kunnossa, apache oli päällä ja oletussivu luotu.
 
 **d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille. Voit laittaa kotisivut päälle 'a2enmod userdir', ottaa /etc/-tiedostoista aikajanan ja tehdä tarvittavat symlinkit file.symlink.**
+
+Ensin laitoin [Tero Karvisen ohjeen mukaisesti](https://terokarvinen.com/2008/install-apache-web-server-on-ubuntu-4/) `sudo a2enmod userdir` kommennolla mod_userdir -moduulin päälle. Tällä käyttäjät saavat käyttöönsä myös omat kotisivut. Kun olin antanut komennon, hain aikajanalla viimeisimmät tiedostot, joita edellinen komento oli muokannut:
+
+![Image](screenshots/H5_14.png)
+
+Syötteestä näkee, että seuraavat apache-tiedostot ovat muokkautuneet:
+
+```
+2021-11-30+20:32:03.8329538970 ./apache2/mods-enabled
+2021-11-30+20:32:03.8329538970 ./apache2/mods-enabled/userdir.conf
+2021-11-30+20:32:03.8329538970 ./apache2/mods-enabled/userdir.load
+```
+
+Symlink on on symbolic link ja jos oikein ymmärsin, se on ns. polkulinkki haluttuun polkuun. Siis linkki, ei itsenäinen tiedosto.
+
+Tässä harjoituksessa on ilmeisesti tarkoituksena on, että mod_userdir -moduuli otetaan käyttöön symlinkin kautta, eli init.sls tiedostoon ei tarvitse erikseen antaa komentoa, joka minionissa toimisi tapaan: `sudo a2enmod userdir`.
+
+Löysin SaltStackin sivuilta seuraavan: [salt.states.file.symlink](https://docs.saltproject.io/en/latest/ref/states/all/salt.states.file.html#salt.states.file.symlink). Tämän mukaan muokkasin `init.sls` tiedostoa seuraavasti:
+
+```
+ 1 apache2:
+ 2   pkg.installed
+ 3
+ 4 /var/www/html/index.html:
+ 5   file.managed:
+ 6     - source: salt://apache/index.html
+ 7
+ 8 apache2service:
+ 9   service.running:
+10     - name: apache2
+11     - enable: True
+12     - watch:
+13       - file: /etc/apache2/mods-enabled/userdir.conf
+14       - file: /etc/apache2/mods-enabled/userdir.load
+15
+16 /etc/apache2/mods-enabled/userdir.conf:
+17   file.symlink:
+18     - target: /etc/apache2/mods-enabled/userdir.conf
+19
+20 /etc/apache2/mods-enabled/userdir.load:
+21   file.symlink:
+22     - target: /etc/apache2/mods-enabled/userdir.load
+```
+
+* Rivit 16 ja 20: sijainti kohteessa, johon symlinkki luodaan
+* Rivit 14 ja 22: polkulinkki joka halutaan symlinkiksi
+* Rivit 13 ja 14: määrätään apache katsomaan id-kohtia 16 ja 20.
+
+Testasin ensin paikallisesti:
+
+![Image](screenshots/H5_15.png)
+
+Meni läpi. Tämän jälkeen suoritin minioneille:
+
+![Image](screenshots/H5_16.png)
+
+Kaikki ajot menivät läpi myös minioneille. Seuraavaksi tarkistin vielä minionista, miltä näyttää. Kirjauduin ssh-yhteydellä sisään ja tarkistin aikajanalla, onko muutoksia tullut:
+
+![Image](screenshots/H5_17.png)
+
+Kyllä oli. mod_userdir -moduulit oli luotu myös sinne symlinkin avulla. 
 
 **e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa. Katso, että sivuille tulee oikea omistaja. Vinkki: /etc/skel/ kopioidaan luoduille käyttäjille. Kotisivuja etsitään osoitteesta /home/tero/public_html/index.html.**
 
