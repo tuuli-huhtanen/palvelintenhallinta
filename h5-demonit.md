@@ -1,11 +1,11 @@
 # Palvelinten hallinta - h5: Demonit
 
-[a) Watch it! Asenna Saltilla SSHD asetuksineen.](#a)
-[b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii.](#b)
-[c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen.](#c)
-[d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille](#d)
-[e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa.](#e)
-[f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen.](#f)
+* [a) Watch it! Asenna Saltilla SSHD asetuksineen.](#a)
+* [b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii.](#b)
+* [c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen.](#c)
+* [d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille](#d)
+* [e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa.](#e)
+* [f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen.](#f)
 
 Tämä harjoitus on osa Tero Karvisen pitämää Palvelinten hallinta ICT4TN022-3014 -kurssia Haaga-Helia ammattikorkeakoulussa syksyllä 2021.
 
