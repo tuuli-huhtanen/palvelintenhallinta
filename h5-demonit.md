@@ -245,7 +245,7 @@ To                         Action      From
 
 Tässä välissä palautin jälleen backupit masterille, tarkistin tilanteen ja seuraavaksi ajoin minioneille:
 
-![Image](H5_7.png)
+![Image](screenshots/H5_7.png)
 
 Ei mennyt läpi. Enää ei ollut ollenkaan yhteyttä minioneihin muutenkaan, testasin komennolla `salt '*' test.ping`. 
 
@@ -633,4 +633,165 @@ Myös nginx vie oletusivun `/var/www/html` -hakemistoon kuten apachekin ja koska
 
 Tähän lopetin harjoituksen tiistaina 30.11.2021 klo 23.00 ja päätin jatkaa myöhemmin.
 
+Jatkoin harjoitusta keskiviikkona 01.12.2021 klo 17:30.
 
+Tutkin [nginxiä](https://nginx.org/) ennen harjoituksen jatkamista. Nginx on apachen tapaan web-palvelin. Sitä voidaan käyttää myös proxypalvelimena, eli välittäjäpalvelimena, jolta voidaan ohjata liikennettä muille palvelimille.
+
+Tutkin nginxin rakennetta ja siinä oli hyvin paljon samaa, kuin apachessa. Koska tässä harjotuksessa on tarkoitus ensin asentaa nginx-webpalvelin ja tehdä sille jokin konfiguraatio samalla, aloitin etsimällä nginxin konfiguraatiotiedostot järjestelmästä. 
+
+Lähdin etsimään konfiguraatiotiedostoja hakemistosta `/etc` ja sieltä niitä löytyi loogisesti hakemistosta `/etc/nginx`.
+
+Mietin, että pystyykö nginxillä tekemään saman kuin apachessa harjoituksessa edellisessä harjoituksessa, eli mahdollisuuden käyttäjille sijoittaa omat sivunsa kotihakemistossa sijaitsevaan `public_html` -kansioon ja saada sivunsa näkyviin selaimessa osoitteella http://localhost/~kayttajanimi. Tutkittuani asiaa, löysin seuraavan ohjeen: [Configure Nginx Userdir Feature on Ubuntu 16.04 LTS Servers](https://websiteforstudents.com/configure-nginx-userdir-feature-on-ubuntu-16-04-lts-servers/).
+
+Apachessa userdir-moduuli otetaan komennolla käyttöön, kun taas nginxissä se täytyy määritellä asetustiedostoon. Asetusmääritellään tiedostoon `/etc/nginx/sites-available/default`, jossa ymmärtääkseni voi muuttaa esim. sivuihin liittyviä asetuksia. 
+
+Lisäsin yllämainitusta lähteestä seuraavan kohdan asetustiedostoon:
+
+``` 
+48         location ~ ^/~(.+?)(/.*)?$ {
+49          alias /home/$1/public_html_nginx$2;
+50          index index.html index.htm;
+51          autoindex on;
+52         }
+```
+
+* Rivi 48: nginx jakaa asetukset ns blockeihin ja location on yksi block. `location`:in jälkeen tulee rivi regexejä. Tässä en osaa tulkita mitä tarkoittaa. Lähde: [Nginx Location Directive Explained](https://www.keycdn.com/support/nginx-location-directive).
+* Rivi 49: Tämä luo hakemiston käyttäjän kotihakemistoon. Asetin kansion nimeksi `public_html_nginx`, sillä koneeseen on asennettu myös apache, joka käyttää `public_html` -hakemistoa.
+* Rivi 50: määrittää mitkä eri nimet etusivusta (index) kelpaavat.
+* Rivi 51: määrittää hakemiston näkyviin.
+
+Tallennuksen jälkeen yritin käynnistää nginxin uudelleen, mutten onnistunut. Virheilmoitus oli seuraava:
+
+```
+tuuli@debian1:~$ sudo systemctl restart nginx 
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xe" for details.
+tuuli@debian1:~$ sudo systemctl status nginx 
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+     Active: failed (Result: exit-code) since Wed 2021-12-01 18:49:07 EET; 3s ago
+       Docs: man:nginx(8)
+    Process: 6172 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=ex>
+        CPU: 6ms
+
+joulu 01 18:49:07 debian1 systemd[1]: Starting A high performance web server and a reverse pro>
+joulu 01 18:49:07 debian1 nginx[6172]: nginx: [emerg] unknown directive "ten" in /etc/nginx/si>
+joulu 01 18:49:07 debian1 nginx[6172]: nginx: configuration file /etc/nginx/nginx.conf test fa>
+joulu 01 18:49:07 debian1 systemd[1]: nginx.service: Control process exited, code=exited, stat>
+joulu 01 18:49:07 debian1 systemd[1]: nginx.service: Failed with result 'exit-code'.
+joulu 01 18:49:07 debian1 systemd[1]: Failed to start A high performance web server and a reve>
+lines 1-13/13 (END)
+```
+
+Tutkin asiaa ja löysin [Stackoverflowsta vastauksen: Nginx: Failed to start A high performance web server and a reverse proxy server](https://stackoverflow.com/questions/51525710/nginx-failed-to-start-a-high-performance-web-server-and-a-reverse-proxy-server). Eli jos apache on päällä, nginx ei toimi. Kokeilin sammuttaa apachen `sudo systemctl stop apache2` ja käynnistää nginxin uudelleen. Edelleenkään ei lähtenyt käyntiin. Päätin poistaa ja asentaa nginxin uudelleen:
+
+```
+sudo apt-get purge nginx nginx-common
+sudo apt-get autoremove
+sudo apt-get update
+sudo apt-get install nginx
+sudo systemctl restart ngninx
+sudo systemctl status nginx
+```
+
+Ja sain päälle:
+
+![Image](screenshots/H5_21.png)
+
+Koska poistin kaiken, päivitin `/etc/nginx/sites-available/default` tiedoston uudestaan:
+
+![Image](screenshots/H5_22.png)
+
+Käynnistin nginxin uudelleen `sudo systemctl restart nginx`. Loin uuden käyttäjän testi2 ja tarkistin, onko käyttäjän kotihakemistossa `public_html_nginx` -kotihakemistoon. Ei löytynyt. Ja pian ymmärsin miksi. Eli kuten apachessa, niin samoin nginxissä käyttäjän täytyy itse luoda kyseinen `public_html`-hakemisto (tai tässä tapauksessa `public_html_nginx` -hakemisto), johon käyttäjä luo myös index.html -sivuston. 
+
+Kokeilin siis seuraavaa: loin omaan kotihakemistoon `public_html_nginx` -hakemiston ja sinne `index.html`, johon kirjoitin "Nginx":
+
+```
+tuuli@debian1:~$ mkdir public_html_nginx
+tuuli@debian1:~$ nano public_html_nginx/index.html
+tuuli@debian1:~$ cat public_html_nginx/index.html 
+<html>
+<head></head>
+<body>
+<p> Nginx </p>
+</body>
+</html>
+```
+Testasin toimivuutta laittamalla selaimeen osoitteen `localhost/~tuuli`.
+
+![Image](screenshots/H5_23.png)
+
+Toimi! Eli seuraavaksi lähdin tekemään Salt -tilaa, joka asentaa nginxin, varmistaa sen päälläolon, tekee äskeisen muutoksen asetustiedostoon ja vielä luo samalla uusille käyttäjille `/etc/skel/`-hakemistosta `public_html_nginx`-hakemiston ja sinne `index.html`-sivun. Tein `srv/salt/nginx/init.sls` tiedoston ylempänä luomani apachen init -tiedostoa mukaillen:
+
+```
+ 1 nginx:
+ 2   pkg.installed
+ 3
+ 4 /etc/nginx/sites-available/default:
+ 5   file.managed:
+ 6     - source: salt://nginx/sites-available/default
+ 7
+ 8 nginxservice:
+ 9   service.running:
+10     - name: nginx
+11     - enable: True
+12     - watch:
+13       - file: /etc/nginx/sites-available/default
+14
+15 /etc/skel/public_html_nginx/index.html:
+16   file.managed:
+17     - source: salt://nginx/public_nginx/index.html
+18     - makedirs: True
+```
+
+* Rivit 1-2: Asennetaan nginx
+* Rivit 4-6: Viedään konfiguraatiotiedosto Saltista(r6) kohdehakemistoon(r4)
+* Rivit 8-13: Varmistetaan, että nginx on päällä ja että se tarkkailee id:tä riviltä 4
+* Rivit 15-18: Luodaan hakemisto polkuun (r15) ja viedään Saltin juuresta tiedosto (r17)
+
+Seuraavaksi kopioin muokkaamani `/etc/nginx/sites-available/default` - tiedoston Saltiin ja vein myös `/srv/salt/nginx` hakemistoon kotihakemistostani `public_html_nginx/index.html`. Rakenne näytti seuraavalta:
+
+```
+tuuli@debian1:/srv/salt/nginx$ tree
+.
+├── init.sls
+├── public_html_nginx
+│   └── index.html
+└── sites-available
+    └── default
+
+2 directories, 3 files
+
+```
+
+Seuravaaksi ajoin tilan paikallisesti komennolla `sudo salt-call --local state.apply nginx`:
+
+![Image](screenshots/H5_23.png)
+
+Kolme meni läpi, ei muutoksia. Nämä olivatkin jo masterilla valmiina, sillä olin äsken samassa järjestelmässä kokeillut asennusta ja asetustiedoston muuttamista. Odotin, että yksi muutos olisi tullut ja se olisi ollut viimeinen, joka olisi luonut `/etc/skel/public_html_nginx/index.html`-hakemiston ja tiedoston. Näin heti, että siellä on kirjoitusvirhe polussa: `Comment: Source file salt://nginx/public_nginx/index.html not found in saltenv 'base'`.
+
+Korjasin polun:
+```
+15 /etc/skel/public_html_nginx/index.html:
+16   file.managed:
+17     - source: salt://nginx/public_html_nginx/index.html
+18     - makedirs: True
+```
+
+![Image](screenshots/H5_25.png)
+
+Meni läpi ja yksi muutos tuli, eli uusi tiedosto luotiin. Seuraavaksi kokeilin ajaa minioneille. Muistin, että minulla on minionissa ajettuna apache -tila, joten apache on siellä päällä ja se on syytä sulkea. Kokeilin, saanko `cmd.run`-komennolla pysäyttää apachen:
+
+![Image](screenshots/H5_26.png)
+
+Ilmeisesti meni. En tosin ymmärtänyt lopussa olevaa erroria, sillä komento näytti kuitenkin toimivan ja yhteys oli päällä (minion vastasi pingiin saltilla = `sudo salt '*' test.ping`)
+
+Seuraavaksi ajoin nginx-tilan:
+
+![Image](screenshots/H5_27.png)
+
+Tila oli mennyt läpi. Sähelsin ensimmäisen ajon aikana (näkee kuvasta), joilloin tila ilmeisesti ajettiin onnistuneesti, mutta lopetin prosessin kesken. Seuraavalla ajolla kaikki oli asennettuonnistuneesti, mutta ei muutoksia, koska oli jo mennyt aikaisemmin läpi. Seuraavaksi testasin toimivuutta niin, että kirjauduin ssh:lla minionille (debian2) ja loin uuden käyttäjän `testikayttaja`. Komennolla `curl 192.168.1.192/~testikayttaja` testasin samalla, että testikayttajalle on luotu `public_html_nginx` hakemisto ja sinne `index.html` ja lisäksi, että se näkyy, kun hakee hostin ip-osoitteella ja käyttäjätunnuksella:
+
+![Image](screenshots/H5_28.png)
+
+Ajo ilmeisesti onnistui.
