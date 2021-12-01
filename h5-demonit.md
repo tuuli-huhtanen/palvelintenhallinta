@@ -1,5 +1,12 @@
 # Palvelinten hallinta - h5: Demonit
 
+1. [a) Watch it! Asenna Saltilla SSHD asetuksineen.](#a)
+2. [b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii.](#b)
+3. [c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen.](#c)
+4. [d) d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille](#d)
+5. [e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa.](#e)
+6. [f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen.](#f)
+
 Tämä harjoitus on osa Tero Karvisen pitämää Palvelinten hallinta ICT4TN022-3014 -kurssia Haaga-Helia ammattikorkeakoulussa syksyllä 2021.
 
 Tein harjoituksen tiistaina 30.11.2021. Koneena oli Lenovo Yoga Slim 7 -kannettava Windows 11 -käyttöjärjestelmällä ja koneelle asennetun Oracle VirtualBox (6.1) -kautta Debian 11 “bullseye”.
@@ -9,7 +16,7 @@ Harjoitus perustuu Tero Karvisen antamaan ohjeistukseen, joka löytyy [kurssisiv
 * **Master -koneena seuraavissa harjoituksissa on VirtualBoxissa pyörivä Debian 11 (debian1)**
 * **Minion -koneita on 2: yksi Debian 11 (debian2) ja yksi Ubuntu server 20.40.03 LTS (ubuntus1)**
 
-**a) Watch it! Asenna Saltilla SSHD asetuksineen. Lisää ssh-demonille ylimääräinen portti. Osoita testein, että uusi portti toimii. Vaihda porttia masterilla olevasta asetustiedoston mallista (/srv/salt/sshd/sshd_config tms), aja tila orjille, ja osoita testein, että palvelin käynnistyy jos ja vain jos asetustiedoston malli masterilla on muuttunut. Vinkki: Karvinen 2018: Pkg-File-Service – Control Daemons with Salt – Change SSH Server Port**
+## **a) Watch it! Asenna Saltilla SSHD asetuksineen. Lisää ssh-demonille ylimääräinen portti. Osoita testein, että uusi portti toimii. Vaihda porttia masterilla olevasta asetustiedoston mallista (/srv/salt/sshd/sshd_config tms), aja tila orjille, ja osoita testein, että palvelin käynnistyy jos ja vain jos asetustiedoston malli masterilla on muuttunut. Vinkki: Karvinen 2018: Pkg-File-Service – Control Daemons with Salt – Change SSH Server Port** <a name="a"></a>
 
 Aloitin harjoituksen luomalla `/srv/salt/ssh` -hakemiston master -koneelle, eli debian1:seen. Loin hakemistoon `init.sls` tiedoston, johon loin seuraavanlaisen ohjelmoinnin:
 
@@ -155,7 +162,7 @@ To                         Action      From
 
 Koska olin muokkaamassa sääntöjä, otin backupkopioit tiedostoista `/etc/ufw/user.rules`ja `/etc/ufw/user6.rules`. Tämän jälkeen poistin masterilla Saltin käyttämät portit ja 22/tcp:n ja hyväksyin portin 4578:
 
-![Image](screenshots/H5_4.PNG)
+![Image](screenshots/H5_4.png)
 
 Ensin tarkistin porttitilanteen, jonka jälkeen resetoin koko palomuurin. Ilmeisesti järjestelmä tekee itsekin varmuuskopiot tässä vaiheessa (ylläolevassa kuvassa). Tämän jälkeen tarkistin, ettei portteja ollut ja järjestelmä ilmoittaa, ettei tulimuuri ole päällä. Tämän jälkeen päivitin portin 4578/tcp ja laitoin palomuurin päälle, jonka jälkeen tutkin tilannetta. Nyt asetukset ovat sellaiset, mitkä haluaisin ajaa minioneille. Käytin apuna tässä kohtaa ohjetta: [How to Delete rules in UFW Ubuntu Firewall using ufw delete command](https://www.configserverfirewall.com/ufw-ubuntu-firewall/ufw-delete-rule/). 
 
@@ -270,7 +277,7 @@ Last login: Mon Nov 29 21:44:24 2021 from 192.168.1.189
 tuuli@debian2:~$ 
 ```
 
-**b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii. Siivoa sshd_configista turhat kommenttirivit. Laita tiedostoon kommentti, jossa varoitetaan, että tiedosto ylikirjoittuu automaattisesti. Liitä siivottu sshd_config vastaukseesi.**
+## **b) Securerer shell. Tee Saltin kautta jokin muu sshd:n asetus ja osoita, että se toimii. Siivoa sshd_configista turhat kommenttirivit. Laita tiedostoon kommentti, jossa varoitetaan, että tiedosto ylikirjoittuu automaattisesti. Liitä siivottu sshd_config vastaukseesi.**<a name="b"></a>
 
 Tässä vaiheessa harjoitusta en saanut enää yhteyttä minioneihin, joten päätin palata harjoituksen alussa olevaan master-koneeseen ja minion-koneeseen debian2 (en ollut epähuomiossa ottanut ubuntus1- snapshottia, joten jätin sen pois jatkosta).
 
@@ -372,7 +379,7 @@ Toimi. Lopuksi ajoin minionille:
 
 Ajo meni läpi, myöskin testi, jossa kirjaudun ssh:llä minionille. Myös bannerin teksti tuli näkyviin.
 
-**c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen. Korvaa testisivu /var/www/html/index.html sivulla, jossa lukee vain "Hello".**
+## **c) Maailman suosituin. Tee Salt-tila (eli formula, siis omaa infraa koodina), joka asentaa Apache-weppipalvelimen. Korvaa testisivu /var/www/html/index.html sivulla, jossa lukee vain "Hello".**<a name="c"></a>
 
 Aloitin harjoituksen luomalla hakemiston `/srv/salt/apache` ja sinne tiedoston `init.sls`. Käytin harjoituksessa apunanin [Janne Mustosen oma moduuli -harjoitusta](https://jannelinux.design.blog/2020/05/19/oma-moduuli-h7/).
 
@@ -427,7 +434,7 @@ Meni onnistuneesti läpi. Testasin kirjautumalla ssh:lla minionille, katsoin `cu
 
 Kaikki vaikutti olevan kunnossa, apache oli päällä ja oletussivu luotu.
 
-**d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille. Voit laittaa kotisivut päälle 'a2enmod userdir', ottaa /etc/-tiedostoista aikajanan ja tehdä tarvittavat symlinkit file.symlink.**
+## **d) Minä ja kissani. Lisää Apache-reseptiisi (siihen Saltilla kirjoittamaasi) tuki käyttäjien kotisivuille. Voit laittaa kotisivut päälle 'a2enmod userdir', ottaa /etc/-tiedostoista aikajanan ja tehdä tarvittavat symlinkit file.symlink.** <a name="d"></a>
 
 Ensin laitoin [Tero Karvisen ohjeen mukaisesti](https://terokarvinen.com/2008/install-apache-web-server-on-ubuntu-4/) `sudo a2enmod userdir` kommennolla mod_userdir -moduulin päälle. Tällä käyttäjät saavat käyttöönsä myös omat kotisivut. Kun olin antanut komennon, hain aikajanalla viimeisimmät tiedostot, joita edellinen komento oli muokannut:
 
@@ -490,7 +497,7 @@ Kaikki ajot menivät läpi myös minioneille. Seuraavaksi tarkistin vielä minio
 
 Kyllä oli. mod_userdir -moduulit oli luotu myös sinne symlinkin avulla. 
 
-**e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa. Katso, että sivuille tulee oikea omistaja. Vinkki: /etc/skel/ kopioidaan luoduille käyttäjille. Kotisivuja etsitään osoitteesta /home/tero/public_html/index.html.**
+## **e) Valmiiseen pöytään. Tee käyttäjille valmiit esimerkkikotisivut siten, että esimerkkikotisivu syntyy käyttäjää luodessa. Katso, että sivuille tulee oikea omistaja. Vinkki: /etc/skel/ kopioidaan luoduille käyttäjille. Kotisivuja etsitään osoitteesta /home/tero/public_html/index.html.** <a name="e"></a>
 
 Käyttäjän kotisivut sijaitsevat käyttäjän kotihakemistossa, johon käyttäjän tulee luoda hakemist `public_html`. Vaikka usrdir-moduuli olisi otettu käyttöön, se ei vielä luo `public_html` hakemistoa käyttäjän kotihakemistoon.
 
@@ -620,7 +627,7 @@ Oli luotu. Yritin päästä verkkoselaimella tarkastelemaan sivustoa osoitteella
 Edit: En myöskään ajanut minioneille tätä harjoitusta, mutta se toimi masterilla. Harjoitusta voisi tosiaan jatkaa tutkimalla, miten webbisivun saa näkyviin ja sitten ajaa ja testata minioneilla. 
 
 
-**f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen. Vinkki: ensin käsin, vasta sitten automaattisesti. Tässä tehtävässä osa haastetta on selvittää, miten nginx otetaan käyttöön.**
+## **f) Mootorix. Tee Salt-tila, joka asentaa Nginx-weppipalvelimen ja tekee sille jonkin asetuksen. Vinkki: ensin käsin, vasta sitten automaattisesti. Tässä tehtävässä osa haastetta on selvittää, miten nginx otetaan käyttöön.** <a name="f"></a>
 
 Koska Nginx-palvelin ei ollut minulle entuudestaan tuttu, asensin sen ensin itse master -koneelle. Käytin apunani [Ubuntu: Install and configure Nginx](https://ubuntu.com/tutorials/install-and-configure-nginx#1-overview).
 
@@ -766,7 +773,7 @@ tuuli@debian1:/srv/salt/nginx$ tree
 
 Seuravaaksi ajoin tilan paikallisesti komennolla `sudo salt-call --local state.apply nginx`:
 
-![Image](screenshots/H5_23.png)
+![Image](screenshots/H5_24.png)
 
 Kolme meni läpi, ei muutoksia. Nämä olivatkin jo masterilla valmiina, sillä olin äsken samassa järjestelmässä kokeillut asennusta ja asetustiedoston muuttamista. Odotin, että yksi muutos olisi tullut ja se olisi ollut viimeinen, joka olisi luonut `/etc/skel/public_html_nginx/index.html`-hakemiston ja tiedoston. Näin heti, että siellä on kirjoitusvirhe polussa: `Comment: Source file salt://nginx/public_nginx/index.html not found in saltenv 'base'`.
 
