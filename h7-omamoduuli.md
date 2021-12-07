@@ -4,6 +4,10 @@ Tämä harjoitus on osa Tero Karvisen pitämää Palvelinten hallinta ICT4TN022-
 
 Tätä raporttia on tehty monessa osassa ja otsikot menevät päivämäärän mukaan.  Koneena oli Lenovo Yoga Slim 7 -kannettava Windows 11 -käyttöjärjestelmällä ja koneelle asennetun Oracle VirtualBox (6.1) -kautta Debian 11 “bullseye”.
 
+**Vaiheet:**
+* [06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio'](#06.12.2021)
+* [07.12.2021 ufw -moduuli ja testaamista minionilla](#07.12.2021)
+
 ## 06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio' <a href="06.12.2021"></a>
 
 Aloitin harjoituksen noin klo 19 aikoihin.
@@ -685,7 +689,7 @@ Total run time: 117.964 ms
 
 Lopetin harjoituksen noin klo 23:00
 
-## 07.12.2021 ufw -moduuli ja testaamista minionilla
+## 07.12.2021 ufw -moduuli ja testaamista minionilla<a href="07.12.2021"></a>
 
 ### ufw -moduuli<a href="07.12.2021ufw"></a>
 
@@ -1294,7 +1298,7 @@ set suspendable
 include "/usr/share/nano/*.nanorc"
 ```
 
-Eli omien lisäysteni jälkeen poistan ne, mitä ei löydy Ubuntulta ja muutan ne mitä pitää:
+Eli omien lisäysteni jälkeen poistin ne, mitä ei löydy Ubuntulta ja muutin ne mitä pitää:
 
 ```
 tuuli@debian1:~$ cat /srv/salt/nano/nanorc 
@@ -1382,7 +1386,7 @@ Total run time:  12.576 s
 
 Ajo meni läpi ja ilmeisesti Ubuntussa on oletuksena bash-completion ja net-tools asennettuna. Tree ja git asentuivat. Testasin Ubuntulla:
 
-![Image](H7_6.png)
+![Image](screenshots/H7_6.png)
 
 Git oli asentunut ja tree toimi.
 
@@ -1580,7 +1584,7 @@ Total run time:  13.897 s
 
 Kaikki kohteet muuttuivat ja menivät läpi. Testasin ssh-yhteyttä masterilta:
 
-![Image](H7_7.png)
+![Image](screenshots/H7_7.png)
 
 Toimi.
 
