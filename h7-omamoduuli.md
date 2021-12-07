@@ -1584,3 +1584,4 @@ Kaikki kohteet muuttuivat ja menivät läpi. Testasin ssh-yhteyttä masterilta:
 
 Toimi.
 
+Lopetin harjoituksen noin klo 21:00
