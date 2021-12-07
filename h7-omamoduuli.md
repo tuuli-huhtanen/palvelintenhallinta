@@ -4,9 +4,16 @@ Tämä harjoitus on osa Tero Karvisen pitämää Palvelinten hallinta ICT4TN022-
 
 Tätä raporttia on tehty monessa osassa ja otsikot menevät päivämäärän mukaan.  Koneena oli Lenovo Yoga Slim 7 -kannettava Windows 11 -käyttöjärjestelmällä ja koneelle asennetun Oracle VirtualBox (6.1) -kautta Debian 11 “bullseye”.
 
+---
+
+**Raportissa tehtävä mooduli:** [https://github.com/tuuli-huhtanen/palvelintenhallinta-moduuli](https://github.com/tuuli-huhtanen/palvelintenhallinta-moduuli)
+
+
 **Vaiheet:**
 * [06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio'](#06.12.2021)
 * [07.12.2021 ufw -moduuli ja testaamista minionilla](#07.12.2021)
+
+---
 
 ## 06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio' <a href="06.12.2021"></a>
 
