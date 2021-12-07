@@ -802,3 +802,19 @@ Tila oli mennyt läpi. Sähelsin ensimmäisen ajon aikana (näkee kuvasta), joil
 ![Image](screenshots/H5_28.png)
 
 Ajo ilmeisesti onnistui.
+
+**Edit 07.12.2021:** Katsoin tehtävää läpi uudestaan ja totesin, että eihän tämä onnistunut (en todella tiedä miten päädyin errorista huolimatta päättelemään, että harjoitus olisi onnistunut...) 
+
+Avasin harjoituksen uudelleen ja pian huomasin että itsessään harjoitus oli kyllä onnistunut: testikäyttäjälle oli luotu hakemisto ja siellä oli nginx:in public_html ja siellä sinne viety index.html. Menin siis suoraan debian2, en ssh-yhteydellä masterilta. Avasin selaimessa `localhost/~testikayttaja` ja sivu avautui kuten pitääkin.
+
+Tutkin asiaa ja huomasin curl -komennossani olleen virheen. Tässä keskustelussa asiaa on käyty paremmin läpi: [Stackoverflow: Why nginx works with error 301 HTTP1.1/Moved permanently?](https://stackoverflow.com/questions/60316444/why-nginx-works-with-error-301-http1-1-moved-permanently). Ilmeisesti asia liittyy nginxin tapaan hakea tietoa pyynnön ja palvelimen välillä. Nginxin asetustiedostoissa on määritelty prosessi niin, että tilanteessa, jossa `/` ei ole osoitteen lopussa, asetutiedoissa olevan block hakee error 301 -ilmoituksen.
+
+Eli olin saanut harjoitukseni toimimaan, mutta hain väärällä osoitteella. Tämän voisi periaatteessa muuttaa nginxin asetustiedostoista. 
+
+Tässä vielä kuva näytöstä, jossa testasin harjoituksen lopputulosta:
+
+![Image](screenshots/H5_29.png)
+
+Selaimessa näkyy haluttu sivu halutulla osoitteella. 
+
+`curl localhost/̃~testikayttaja/` antaa toivotun lopputuloksen myös, mutta `curl localhost/~testikayttaja` antaa errorin. 
