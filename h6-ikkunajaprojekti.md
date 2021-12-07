@@ -1,4 +1,4 @@
-# Palvelinten hallinta - h5: Demonit
+# Palvelinten hallinta - h6: Ikkuna ja projekti
 
 * [z) Lue ja tiivistä artikkeli muutamalla ranskalaisella viivalla.](#z)
 * [a) Kerää tietoa Windowsista Saltilla.](#a)
@@ -16,7 +16,7 @@ Harjoitus perustuu Tero Karvisen antamaan ohjeistukseen, joka löytyy [kurssisiv
 
 * **Windows -minionina harjotuksissa on VirtualBoxissa pyörivä Windows 10 pro (windows10pro)**
 
-##z) Lue ja tiivistä artikkeli muutamalla ranskalaisella viivalla. Tässä z-alakohdassa ei tarvitse siis tehdä testejä tietokoneella. <a name="z"></a> 
+## z) Lue ja tiivistä artikkeli muutamalla ranskalaisella viivalla. Tässä z-alakohdassa ei tarvitse siis tehdä testejä tietokoneella. <a name="z"></a> 
 
 Tein harjoitusta sunnuntaina 05.12.2021 klo 22:00-24:00 ja viimeistelin maanantaina 06.12.2021 klo 15:30-16:00. 
 
@@ -36,7 +36,7 @@ Tein harjoitusta sunnuntaina 05.12.2021 klo 22:00-24:00 ja viimeistelin maananta
 * Asennuksen jälkeen masterilla Windows-minion hyväksytään kuten muutkin minionit: `sudo salt-key -A`
 * Yhtettyä voi testata komennolla `sudo salt '*' test.ping`. Windows voi vastata paljon hitaammin kuin vastaavat Linux minionit.
 
-** Pakettien asentaminen Saltilla Windowsiin**
+**Pakettien asentaminen Saltilla Windowsiin**
 
 ```
 1  $ sudo mkdir /srv/salt/win
@@ -85,7 +85,7 @@ Artikkelissa käytiin läpi myös:
 * Kun kirjoitat tilan, joka on tarkoitettu eri käyttöjärjestelmille, testaa ensin yhdessä käyttöjärjestelmässä.
 * Tilassa tulee olla ehdot eri käyttöjärjestelmille ja ne tulee sijoittaa tilan alkuun.
 
-** Tila, jota halutaan käyttää sekä Linuxissa ja Windowsissa: ** 
+**Tila, jota halutaan käyttää sekä Linuxissa ja Windowsissa:** 
 
 ```
 1  /srv/salt/hello/init.sls
@@ -237,7 +237,7 @@ Seuraavaksi kokeilin asentaa muutaman samanaikaisesti ja tarkistin niiden oikeat
 * keepass
 * zoom
 
-	tuuli@debian1:~$ sudo salt 'windows10pro' pkg.install vlc,adobereader,keepass,zoom
+`tuuli@debian1:~$ sudo salt 'windows10pro' pkg.install vlc,adobereader,keepass,zoom`
 
 ![Image](screenshots/H6_9.png)
 
@@ -265,7 +265,7 @@ Alkusuunnitelma:
 * SSH:n konfiguraatiot
 * Palomuuriasetukset päälle ja porttien avaukset
 
-** Edit: ** Aloin tämän kirjoittamisen jälkeen samana iltana tekemään ensimmäistä versiota projektista ja totesin, että sain ylläolevat kohdat (lukuunottamatta palomuuria) tehtyä, sillä olen ne jo harjoituksissa tehnyt, joten jatkan eteenpäin moduulin kehittämistä ja yritän haastaa itseäni. 
+**Edit:** Aloin tämän kirjoittamisen jälkeen samana iltana tekemään ensimmäistä versiota projektista ja totesin, että sain ylläolevat kohdat (lukuunottamatta palomuuria) tehtyä, sillä olen ne jo harjoituksissa tehnyt, joten jatkan eteenpäin moduulin kehittämistä ja yritän haastaa itseäni. 
 
 Mietin mitä voisin mahdollisesti tuoda konfiguraatiooni lisää:
 
