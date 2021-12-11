@@ -10,12 +10,14 @@ Tätä raporttia on tehty monessa osassa ja otsikot menevät päivämäärän mu
 
 
 **Vaiheet:**
-* [06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio'](#06.12.2021)
-* [07.12.2021 ufw -moduuli ja testaamista minionilla](#07.12.2021)
+* [06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio'](#ensimmainen)
+* [07.12.2021 ufw -moduuli ja testaamista minionilla](#toinen)
+* [08.12.2021 Firefoxin asetukset](#kolmas)
+* [11.12.2021 FIrefoxin jatkokehitys ja Nano Ubuntulle että Debianille](#neljas)
 
 ---
 
-## 06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio' <a href="06.12.2021"></a>
+## 06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio' <a name="ensimmainen"></a>
 
 Aloitin harjoituksen noin klo 19 aikoihin.
 
@@ -696,7 +698,7 @@ Total run time: 117.964 ms
 
 Lopetin harjoituksen noin klo 23:00
 
-## 07.12.2021 ufw -moduuli ja testaamista minionilla<a href="07.12.2021"></a>
+## 07.12.2021 ufw -moduuli ja testaamista minionilla<a name="toinen"></a>
 
 ### ufw -moduuli<a href="07.12.2021ufw"></a>
 
@@ -1596,3 +1598,429 @@ Kaikki kohteet muuttuivat ja menivät läpi. Testasin ssh-yhteyttä masterilta:
 Toimi.
 
 Lopetin harjoituksen noin klo 21:00
+
+## 08.12.2021 Firefoxin asetukset <a name="kolmas"></a>
+
+Aloitin harjoituksen klo 18.30. Olin jo aikaisemmin hieman tutkinut ja kokeillut (epäonnistuneesti) Firefoxin asetusten muokkaamista ja lähdin selvittämään asiaa tarkemmin. Lopulta löysin [Tero Karvisen ohjeen: Firefox System Wide Settings – /etc/firefox/syspref.js](https://terokarvinen.com/2016/firefox-system-wide-settings-etcfirefoxsyspref-js/).
+
+Ensin tarkistin käytössä olevaltani Firefoxilta, mitä asetuksia olin asettanut ja mitä itse käytän:
+
+* Aloitussivuna minulla oli Firefoxin aloitussivu, jossa oli hakukenttä
+* Oletushakukone DuckDuckGo
+
+Avasin Firefoxin Ubuntussa ja oletuksena se näytti tältä:
+
+![Image](screenshots/H7_8.png)
+
+Ja tältä halusin sen näyttävän: (omalta Windows -koneelta)
+
+![Image](screenshots/H7_9.png)
+
+Aikaisemmin kokeillessani Firefoxin säätöjä, olin muokannut käyttäjän kotihakemistossa olevaa tiedostoa: `.mozilla/firefox/qb2cgajy.default-esr/prefs.js`. Tiedoston alussa kuitenkin lukee isolla, että tiedostoa ylikirjoitetaan, eli sitä saa muokata. Ja eihän se toiminut.
+
+Tero Karvisen ohjeesta selvisi, että muokattava konfiguraatiotiedosto löytyy polusta `/etc/firefox/sysprefs.js`, johon käyttäjä voi ajaa omia asetuksiaan.
+
+Seuraavan vaiheeseen käytin tovin ja kokeilin eri vaihtoehtoja. Eli Firefoxissa muokattavia asetuksia voi etsiä, kun kirjoittaa hakukenttään `about:config`. Tutkin tätä listaa host-Windowsissa olevastani Firefoxista, sillä siinä oli minulle mieluiset asetukset valmiina. Painoin tabin "Show only modified preferences", eli näin vain ne, mihin oli tullut muutoksia.
+
+Etsin esim. kokeilemalla, löytyisikö hakukoneen nimellä asetuksia ja löytyi:
+
+![Image](screenshots/H7_10.png) 
+
+Lisäksi hetken tutkittuani, löysin asetukset, jotka koskevat uutta sivua:
+
+![Image](screenshots/H7_11.png)
+
+Ubuntun asetustiedosto näytti seuraavalta:
+
+```
+tuuli@ubuntudesktop:~$ sudoedit /etc/firefox/syspref.js 
+// This file can be used to configure global preferences for Firefox
+// Example: Homepage
+//pref("browser.startup.homepage", "http://www.weebls-stuff.com/wab/");
+```
+
+Tein seuraavat muutokset:
+
+![Image](screenshots/H7_11.png)
+
+Ja avasin Firefoxin:
+
+![Image](screenshots/H7_12.png)
+
+Shortcutit olivat poissa, mutta oletushakukone ei ollut DuckDuckGo:
+
+![Image](screenshots/H7_13.png)
+
+Tarkistin Ubuntun `about:config`:sta, jossa oli muokattuna Google:
+
+![Image](screenshots/H7_14.png)
+ 
+Eli näytti siltä, että Google olisi muokattu oletushakukoneeksi. Tässä myös mietin, että vaihtaako tämä kokonaan oletushakukoneen DDG:ksi vai pelkästään tuon placeholderin. Kokeilin asettaa Firefoxin selaimesta oletukseksi DuckDuckGo. Hakukone oli muuttunut Googlesta DDG:ksi. Katsoin `about:config`:
+
+![Image](screenshots/H7_15.png)
+
+Nyt oli muuttunut DDG:ksi. Aloin pohtimaan, miksei komento toimi `syspref.js` -tiedostossa.
+
+Selvitin asiaa, mutten löytänyt syytä. Lopetin 21:30.
+
+## 11.12.2021 Firefoxin jatkokehitys ja Nano Ubuntulle että Debianille <a name="neljas"></a>
+
+Aloitin harjoituksen n klo 20:00.
+
+Olin edellisten päivien aikana tutkinut Firefoxin kanssa kohtaamaani ongelmaa, eli sitä, etten saanut oletushakukoneeksi DDG:tä. Keskustelin myös tunnilla siitä, mutten toistaiseksi ole löytänyt syytä. Aikaraja kuitenkin alkoi tulla vastaan, joten päätin kehittää jo olemassa olevaa moduuliani.
+
+Koska halusin pystyä ajamaan moduulin niin Ubuntulle kuin Debianille, toistaiseksi minulla on Nanon kanssa versiohaaste: Ubuntussa on 5.4 ja Ubuntussa on 4.8, jonka takia jotkin oletusasetukset konfiguraatiotiedostossa ovat hieman erilaiset. Tästä syystä en pysty suoraan kopioimaan konfiguraatiotiedostoa `nanorc` ja ajamaan sitä molempiin käyttöjärjestelmiin ongelmitta. 
+Lopulta päädyin seuraavanlaiseen kokeiluun: koska haluamani konfiguraatiot `set linenumbers` ja `set softwrap` ovat komentorakenteeltaan samanlaiset kummassakin versiossa, päädyin kokeilemaan, toimisiko, jos veisin ne vain suoraan tekstinä konfiguraatiotiedoston loppuun:
+
+```
+ 1 /etc/nanorc:
+ 2   file.append:
+ 3     - text:
+ 4       - set linenumbers
+ 5       - set softwrap
+```
+
+Otin testi Ubuntustani nanon konfiguraatiot pois ja ajoin:
+
+```
+tuuli@debian1:~$ sudo salt 'ubuntutest' state.apply nano
+ubuntutest:
+----------
+          ID: /etc/nanorc
+    Function: file.append
+      Result: True
+     Comment: Appended 2 lines
+     Started: 20:37:25.616829
+    Duration: 8.067 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  
+                  +++ 
+                  
+                  @@ -2,3 +2,5 @@
+                  
+                   set locking
+                   set suspend
+                   include "/usr/share/nano/*.nanorc"
+                  +set linenumbers
+                  +set softwrap
+
+Summary for ubuntutest
+------------
+Succeeded: 1 (changed=1)
+Failed:    0
+------------
+Total states run:     1
+Total run time:   8.067 ms
+```
+
+Toimi! Tarkistin vielä suoraan Ubuntusta, jossa toimi kuten pitääkin. Ajoin myös paikallisesti masterille, eikä muutoksia tullut. 
+
+Seuraavaksi myös päätin tunnilla saamien vinkkien perusteella muokata `ufw` -konfiguraatioita. Tällä hetkellä minulla oli konfiguraatiotiedostot seuraavasti:
+
+```
+tuuli@debian1:~$ tree /srv/salt/ufw
+/srv/salt/ufw
+├── init.sls
+├── ufw.conf
+├── user6.rules
+└── user.rules
+```
+
+Opettaja Tero Karvinen kuitenkin mainitsi, että hän tekee mieluiten ufw:n konfiguraatiot `cdm.run`:lla, joten päätin kokeilla. Minulla oli jo ufw:n päällelaitto komentoa, joten samalla tyylillä kokeilin avata myös portin 22:
+
+```
+ 1 ufw:
+ 2   pkg.installed
+ 3
+ 4 'ufw enable':
+ 5   cmd.run:
+ 6     - unless: 'ufw enable | grep active'
+ 7
+ 8 'ufw allow 22/tcp':
+ 9   cmd.run:
+10     - unless: 'sudo ufw status | grep 22/tcp'
+```
+
+Ajoin testi Ubuntulle ja sitä ennen resetoin sen ufw -asetukset. Toimi:
+
+```
+tuuli@debian1:~$ sudo salt 'ubuntutest' state.apply ufw
+ubuntutest:
+----------
+          ID: ufw
+    Function: pkg.installed
+      Result: True
+     Comment: All specified packages are already installed
+     Started: 21:06:20.174547
+    Duration: 56.341 ms
+     Changes:   
+----------
+          ID: ufw enable
+    Function: cmd.run
+      Result: True
+     Comment: unless condition is true
+     Started: 21:06:20.232395
+    Duration: 548.228 ms
+     Changes:   
+----------
+          ID: ufw allow 22/tcp
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw allow 22/tcp" run
+     Started: 21:06:20.780848
+    Duration: 138.549 ms
+     Changes:   
+              ----------
+              pid:
+                  3553
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Rule added
+                  Rule added (v6)
+
+Summary for ubuntutest
+------------
+Succeeded: 3 (changed=1)
+Failed:    0
+------------
+Total states run:     3
+Total run time: 743.118 ms
+```
+
+Samassa huomasin - ja ihmettelin -, miksi muutoksia oli vain yksi, sillä resetoinnin jälkeen ufw oli disable -tilassa, eli muutoksia olisi pitänyt tulla kaksi. Aloin tutkimaan tilaa ja huomasin virheen: rivillä 6 oleva `unless` -ehto tarkistaa väärin sen, onko palomuuri päällä. Korjasin sen tarkistamaan tilan `ufw status` -komennosta seuraavasti:
+
+```
+ 1 ufw:
+ 2   pkg.installed
+ 3
+ 4 'ufw enable':
+ 5   cmd.run:
+ 6     - unless: 'ufw status | grep "Status: active"'
+ 7
+ 8 'ufw allow 22/tcp':
+ 9   cmd.run:
+10     - unless: 'sudo ufw status | grep 22/tcp'
+```
+
+Resetoin Ubuntun ufw-asetukset ja ajoin:
+
+```
+tuuli@debian1:~$ sudo salt 'ubuntutest' state.apply ufw
+ubuntutest:
+----------
+          ID: ufw
+    Function: pkg.installed
+      Result: True
+     Comment: All specified packages are already installed
+     Started: 21:15:35.450732
+    Duration: 57.112 ms
+     Changes:   
+----------
+          ID: ufw enable
+    Function: cmd.run
+      Result: True
+     Comment: unless condition is true
+     Started: 21:15:35.509287
+    Duration: 380.009 ms
+     Changes:   
+----------
+          ID: ufw allow 22/tcp
+    Function: cmd.run
+      Result: True
+     Comment: unless condition is true
+     Started: 21:15:35.889534
+    Duration: 62.906 ms
+     Changes:   
+
+Summary for ubuntutest
+------------
+Succeeded: 3
+Failed:    0
+------------
+Total states run:     3
+Total run time: 500.027 ms
+tuuli@debian1:~$ sudo salt 'ubuntutest' state.apply ufw
+ubuntutest:
+----------
+          ID: ufw
+    Function: pkg.installed
+      Result: True
+     Comment: All specified packages are already installed
+     Started: 21:15:51.950999
+    Duration: 58.571 ms
+     Changes:   
+----------
+          ID: ufw enable
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw enable" run
+     Started: 21:15:52.011111
+    Duration: 592.019 ms
+     Changes:   
+              ----------
+              pid:
+                  5258
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Firewall is active and enabled on system startup
+----------
+          ID: ufw allow 22/tcp
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw allow 22/tcp" run
+     Started: 21:15:52.603350
+    Duration: 136.837 ms
+     Changes:   
+              ----------
+              pid:
+                  5555
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Rule added
+                  Rule added (v6)
+
+Summary for ubuntutest
+------------
+Succeeded: 3 (changed=2)
+Failed:    0
+------------
+Total states run:     3
+Total run time: 787.427 ms
+```
+
+Toimi! Tarkistin vielä Ubuntulta ja toimi kuten pitikin.
+
+Nyt moduulin rakenne näytti seuraavalta:
+
+```
+tuuli@debian1:~$ tree /srv/salt
+/srv/salt
+├── firefox
+│   ├── init.sls
+│   └── prefs.js
+├── nano
+│   └── init.sls
+├── pkgs
+│   └── init.sls
+├── ssh
+│   ├── init.sls
+│   └── sshd_config
+└── ufw
+    └── init.sls
+```
+
+Nyt valmiina oli nano, pkgs, ssh ja ufw. Palasin vielä Firefoxin pariin, vaikken ollut saanut hakukoneen vaihtoa onnistumaan. Päätin jättää sen pois, sillä en löytänyt ratkaisua yrityksistäni huolimatta. Päätin kuitenkin asettaa sille joitakin konfiguraatioita.
+
+Selasin Firefoxin mahdollisia asetuksia ja `about:config`:ia. Lisäksi löysin seuraavan projektin: [https://github.com/pyllyukko/user.js](https://github.com/pyllyukko/user.js) jota hyödysin etsiessäni mahdollisia asetusmahdollisuuksia.
+
+* Selaimen yksilöinti ja seuraaminen kielletty: `privacy.trackingprotection.enabled = true`
+* Salasanojen ehdottaminen, generointi, autotäyttö ja tallennuksen kysyminen pois: 
+ * `signon.generation.enable = false`
+ * `signon.rememberSignons = false`
+ * `signon.autofillForms = false`
+
+* Pois defaultina tuleva "Import bookmarks..." kirjainmerkkipalkissa: `browser.bookmarks.addedImportButton = false`
+* Lisäksi, koska en saanut oletushakukonetta muutettua, asetan kotisivuksi DuckDuckGo:n `
+browser.startup.homepage = https://duckduckgo.com`
+* Ja uusi välilehti avautuu tyhjänä sivuna: `browser.newtabpage.enabled = false`
+
+Ubuntun `/etc/firefox/syspref.js` -tiedostosta tuli seuraavanlainen:
+
+```
+// This file can be used to configure global preferences for Firefox
+
+// Tracking off
+pref("privacy.trackingprotection.enabled", true);
+
+// Asking to save psswds, autofill, suggestions and generation off
+pref("signon.generation.enable", false);
+pref("signon.rememberSignons", false);
+pref("signon.autofillForms", false);
+
+// Removing bookmark bar: "Import bookmarks..."
+pref("browser.bookmarks.addedImportButton", false);
+
+// Homepage DDG and new tabpage empty
+pref("browser.startup.homepage", "https://duckduckgo.com");
+pref("browser.newtabpage.enabled", false);
+```
+
+Testasin ja avasin Firefoxin ja ainakin vaikutti siltä, että muutokset olivat tulleet: etusivu oli DDG, uusi välilehti tyhjä ja asetuksista oli täpit pois salasanat -kohdasta ja tracking-kohdasta. Myös "Import bookmarks" -oli poissa. Vein tiedoston Saltiin. Tein myös Debianilla samat muutokset samaan tiedostoon, mutta Debianissa on Firefoxin ESR, joten konfiguraatiotiedosto oli erilainen, joten tein sille omansa.
+
+Debian:
+
+```
+// This is the Debian specific preferences file for Firefox ESR
+// You can make any change in here, it is the purpose of this file.
+// You can, with this file and all files present in the
+// /etc/firefox-esr directory, override any preference you can see in
+// about:config.
+//
+// Note that pref("name", value, locked) is allowed in these
+// preferences files if you don't want users to be able to override
+// some preferences.
+
+pref("extensions.update.enabled", true);
+
+// Use LANG environment variable to choose locale
+pref("intl.locale.requested", "");
+
+// Disable default browser checking.
+pref("browser.shell.checkDefaultBrowser", false);
+
+// Disable openh264.
+pref("media.gmp-gmpopenh264.enabled", false);
+
+// Default to classic view for about:newtab
+pref("browser.newtabpage.enhanced", false, sticky);
+
+// Disable health report upload
+pref("datareporting.healthreport.uploadEnabled", false);
+
+// Default to no suggestions in the urlbar. This still brings a panel asking
+// the user whether they want to opt-in on first use.
+pref("browser.urlbar.suggest.searches", false);
+
+// Tracking off
+pref("privacy.trackingprotection.enabled", true);
+
+// Asking to save psswds, autofill, suggestions and generation off
+pref("signon.generation.enable", false);
+pref("signon.rememberSignons", false);
+pref("signon.autofillForms", false);
+
+// Removing bookmark bar: "Import bookmarks..."
+pref("browser.bookmarks.addedImportButton", false);
+
+// Homepage DDG and new tabpage empty
+pref("browser.startup.homepage", "https://duckduckgo.com");
+pref("browser.newtabpage.enabled", false);
+```
+
+Koska haluan ajaa eri käyttöjärjestelmiin eri tiedostot, se piti myös konfiguroida tilaan siten.
+Käytin apuna: [https://docs.saltproject.io/en/latest/ref/states/all/salt.states.file.html#salt.states.file.append](https://docs.saltproject.io/en/latest/ref/states/all/salt.states.file.html#salt.states.file.append).
+
+```
+{% if grains['os'] == 'Ubuntu' %}
+/etc/firefox/syspref.js:
+  file.managed:
+    - source: salt://firefox/prefs.js
+{% endif %}
+
+{% if grains['os'] == 'Debian' %}
+/etc/firefox-esr/firefox-esr.js:
+  file.managed:
+    - source: salt://firefox/firefox-esr.js
+{% endif %}
+```
+
+Ajoin tilan sekä masterille (debian), että ubuntulle ja ajot näyttivät menneen läpi. Tässä vaiheessa kello oli 00.20 ja päätin lopettaa tältä illalta.
