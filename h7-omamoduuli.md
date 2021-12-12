@@ -13,7 +13,8 @@ Tätä raporttia on tehty monessa osassa ja otsikot menevät päivämäärän mu
 * [06.12.2021 Projektin alkusuunnitelma ja ensimmäinen 'raakaversio'](#ensimmainen)
 * [07.12.2021 ufw -moduuli ja testaamista minionilla](#toinen)
 * [08.12.2021 Firefoxin asetukset](#kolmas)
-* [11.12.2021 FIrefoxin jatkokehitys ja Nano Ubuntulle että Debianille](#neljas)
+* [11.12.2021 Firefoxin jatkokehitys ja Nano Ubuntulle että Debianille](#neljas)
+* [12.12.2021 Testit ja lopputulos](#viides)
 
 ---
 
@@ -2024,3 +2025,727 @@ Käytin apuna: [https://docs.saltproject.io/en/latest/ref/states/all/salt.states
 ```
 
 Ajoin tilan sekä masterille (debian), että ubuntulle ja ajot näyttivät menneen läpi. Tässä vaiheessa kello oli 00.20 ja päätin lopettaa tältä illalta.
+
+## 12.12.2021 Testit ja lopputulos <a name="viides"></a>
+
+Testasin päivällä jo top.sls -luontia ja tein ensimmäiset testi Firefoxille, aloitin dokumennoin 22:30.
+
+Aloitin luomalla `top.sls` -tilan, josta voisin ajaa kaikki moduulit kerralla. Käytin apuna seuraavaa ohjetta: [https://docs.saltproject.io/en/latest/ref/states/top.html](https://docs.saltproject.io/en/latest/ref/states/top.html).
+
+Loin seuraavanlaisen `/srv/salt/top.sls` -tilan:
+
+```
+base:
+  '*':
+    - ufw
+    - ssh
+    - pkgs
+    - nano
+    - firefox
+```
+
+Olin jo päivällä huomannut testatessani, että ensimmäisellä ajolla Firefox heittää "welcome" -sivun, jota yritin saada pois, onnistumatta siinä. Minulla alkoi deadline alkoi lähestymään, joten jätin asian kehityslistalle.
+
+Seuraavaksi loin tyhjät Ubuntu20.04.3 ja Debian11 -testikoneet. Ubuntussa oli asetettu aktiivisesti jo valmiiksi, muttei avattu palomuuria. Ajoin nyt moduulin `top.sls`-tilan avulla kummallekin.
+
+Ensin Ubuntu: 
+
+```
+tuuli@debian1:~$ sudo salt 'ubuntutesti2' state.apply
+ubuntutesti2:
+----------
+          ID: ufw
+    Function: pkg.installed
+      Result: True
+     Comment: All specified packages are already installed
+     Started: 23:13:50.701646
+    Duration: 62.204 ms
+     Changes:   
+----------
+          ID: ufw enable
+    Function: cmd.run
+      Result: True
+     Comment: unless condition is true
+     Started: 23:13:50.766066
+    Duration: 550.434 ms
+     Changes:   
+----------
+          ID: ufw allow 22/tcp
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw allow 22/tcp" run
+     Started: 23:13:51.316730
+    Duration: 161.186 ms
+     Changes:   
+              ----------
+              pid:
+                  3144
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Rule added
+                  Rule added (v6)
+----------
+          ID: openssh-server
+    Function: pkg.installed
+      Result: True
+     Comment: The following packages were installed/updated: openssh-server
+     Started: 23:13:51.478156
+    Duration: 20210.272 ms
+     Changes:   
+              ----------
+              ncurses-term:
+                  ----------
+                  new:
+                      6.2-0ubuntu2
+                  old:
+              openssh-server:
+                  ----------
+                  new:
+                      1:8.2p1-4ubuntu0.3
+                  old:
+              openssh-sftp-server:
+                  ----------
+                  new:
+                      1:8.2p1-4ubuntu0.3
+                  old:
+              ssh-import-id:
+                  ----------
+                  new:
+                      5.10-0ubuntu1
+                  old:
+----------
+          ID: /etc/ssh/sshd_config
+    Function: file.managed
+      Result: True
+     Comment: File /etc/ssh/sshd_config updated
+     Started: 23:14:11.690171
+    Duration: 55.447 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  +++ 
+                  @@ -1,123 +1,8 @@
+                  -#	$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+                  -
+                  -# This is the sshd server system-wide configuration file.  See
+                  -# sshd_config(5) for more information.
+                  -
+                  -# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+                  -
+                  -# The strategy used for options in the default sshd_config shipped with
+                  -# OpenSSH is to specify options with their default value where
+                  -# possible, but leave them commented.  Uncommented options override the
+                  -# default value.
+                  -
+                   Include /etc/ssh/sshd_config.d/*.conf
+                  -
+                  -#Port 22
+                  -#AddressFamily any
+                  -#ListenAddress 0.0.0.0
+                  -#ListenAddress ::
+                  -
+                  -#HostKey /etc/ssh/ssh_host_rsa_key
+                  -#HostKey /etc/ssh/ssh_host_ecdsa_key
+                  -#HostKey /etc/ssh/ssh_host_ed25519_key
+                  -
+                  -# Ciphers and keying
+                  -#RekeyLimit default none
+                  -
+                  -# Logging
+                  -#SyslogFacility AUTH
+                  -#LogLevel INFO
+                  -
+                  -# Authentication:
+                  -
+                  -#LoginGraceTime 2m
+                  -#PermitRootLogin prohibit-password
+                  -#StrictModes yes
+                  -#MaxAuthTries 6
+                  -#MaxSessions 10
+                  -
+                  -#PubkeyAuthentication yes
+                  -
+                  -# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+                  -#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
+                  -
+                  -#AuthorizedPrincipalsFile none
+                  -
+                  -#AuthorizedKeysCommand none
+                  -#AuthorizedKeysCommandUser nobody
+                  -
+                  -# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+                  -#HostbasedAuthentication no
+                  -# Change to yes if you don't trust ~/.ssh/known_hosts for
+                  -# HostbasedAuthentication
+                  -#IgnoreUserKnownHosts no
+                  -# Don't read the user's ~/.rhosts and ~/.shosts files
+                  -#IgnoreRhosts yes
+                  -
+                  -# To disable tunneled clear text passwords, change to no here!
+                  -#PasswordAuthentication yes
+                  -#PermitEmptyPasswords no
+                  -
+                  -# Change to yes to enable challenge-response passwords (beware issues with
+                  -# some PAM modules and threads)
+                  +Port 22
+                   ChallengeResponseAuthentication no
+                  -
+                  -# Kerberos options
+                  -#KerberosAuthentication no
+                  -#KerberosOrLocalPasswd yes
+                  -#KerberosTicketCleanup yes
+                  -#KerberosGetAFSToken no
+                  -
+                  -# GSSAPI options
+                  -#GSSAPIAuthentication no
+                  -#GSSAPICleanupCredentials yes
+                  -#GSSAPIStrictAcceptorCheck yes
+                  -#GSSAPIKeyExchange no
+                  -
+                  -# Set this to 'yes' to enable PAM authentication, account processing,
+                  -# and session processing. If this is enabled, PAM authentication will
+                  -# be allowed through the ChallengeResponseAuthentication and
+                  -# PasswordAuthentication.  Depending on your PAM configuration,
+                  -# PAM authentication via ChallengeResponseAuthentication may bypass
+                  -# the setting of "PermitRootLogin without-password".
+                  -# If you just want the PAM account and session checks to run without
+                  -# PAM authentication, then enable this but set PasswordAuthentication
+                  -# and ChallengeResponseAuthentication to 'no'.
+                   UsePAM yes
+                  -
+                  -#AllowAgentForwarding yes
+                  -#AllowTcpForwarding yes
+                  -#GatewayPorts no
+                   X11Forwarding yes
+                  -#X11DisplayOffset 10
+                  -#X11UseLocalhost yes
+                  -#PermitTTY yes
+                   PrintMotd no
+                  -#PrintLastLog yes
+                  -#TCPKeepAlive yes
+                  -#PermitUserEnvironment no
+                  -#Compression delayed
+                  -#ClientAliveInterval 0
+                  -#ClientAliveCountMax 3
+                  -#UseDNS no
+                  -#PidFile /var/run/sshd.pid
+                  -#MaxStartups 10:30:100
+                  -#PermitTunnel no
+                  -#ChrootDirectory none
+                  -#VersionAddendum none
+                  -
+                  -# no default banner path
+                  -#Banner none
+                  -
+                  -# Allow client to pass locale environment variables
+                   AcceptEnv LANG LC_*
+                  -
+                  -# override default of no subsystems
+                   Subsystem	sftp	/usr/lib/openssh/sftp-server
+                  -
+                  -# Example of overriding settings on a per-user basis
+                  -#Match User anoncvs
+                  -#	X11Forwarding no
+                  -#	AllowTcpForwarding no
+                  -#	PermitTTY no
+                  -#	ForceCommand cvs server
+----------
+          ID: sshd
+    Function: service.running
+      Result: True
+     Comment: Service restarted
+     Started: 23:14:11.790348
+    Duration: 889.367 ms
+     Changes:   
+              ----------
+              sshd:
+                  True
+----------
+          ID: default_pkgs
+    Function: pkg.installed
+      Result: True
+     Comment: The following packages were installed/updated: tree, git
+              The following packages were already installed: bash-completion, net-tools
+     Started: 23:14:12.681885
+    Duration: 9109.954 ms
+     Changes:   
+              ----------
+              git:
+                  ----------
+                  new:
+                      1:2.25.1-1ubuntu3.2
+                  old:
+              git-man:
+                  ----------
+                  new:
+                      1:2.25.1-1ubuntu3.2
+                  old:
+              liberror-perl:
+                  ----------
+                  new:
+                      0.17029-1
+                  old:
+              tree:
+                  ----------
+                  new:
+                      1.8.0-1
+                  old:
+----------
+          ID: /etc/nanorc
+    Function: file.append
+      Result: True
+     Comment: Appended 2 lines
+     Started: 23:14:21.793710
+    Duration: 11.485 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  
+                  +++ 
+                  
+                  @@ -298,3 +298,5 @@
+                  
+                   #bind ^U undo main
+                   #bind ^E redo main
+                   #set multibuffer
+                  +set linenumbers
+                  +set softwrap
+----------
+          ID: /etc/firefox/syspref.js
+    Function: file.managed
+      Result: True
+     Comment: File /etc/firefox/syspref.js updated
+     Started: 23:14:21.805308
+    Duration: 53.149 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  +++ 
+                  @@ -1,4 +1,19 @@
+                   // This file can be used to configure global preferences for Firefox
+                  -// Example: Homepage
+                  -//pref("browser.startup.homepage", "http://www.weebls-stuff.com/wab/");
+                   
+                  +// Tracking off
+                  +pref("privacy.trackingprotection.enabled", true);
+                  +
+                  +// Asking to save psswds, autofill, suggestions and generation off
+                  +pref("signon.generation.enable", false);
+                  +pref("signon.rememberSignons", false);
+                  +pref("signon.autofillForms", false);
+                  +
+                  +// Removing bookmark bar: "Import bookmarks..."
+                  +pref("browser.bookmarks.addedImportButton", false);
+                  +
+                  +// Homepage DDG and new tabpage empty
+                  +pref("browser.startup.homepage", "https://duckduckgo.com");
+                  +pref("browser.newtabpage.enabled", false);
+                  +
+                  +//Don't show welcome-page during first run
+                  +pref("trailhead.firstrun.didSeeAboutWelcome", false);
+
+Summary for ubuntutesti2
+------------
+Succeeded: 9 (changed=7)
+Failed:    0
+------------
+Total states run:     9
+Total run time:  31.103 s
+
+```
+
+Tuloste oli pitkä, mutta siitä tulkitsin, että haluamani muutokset olivat menneet läpi. Kaksi oli pysynyt muuttumattomana ja ne liittyivätkin ufw:n, sillä Ubunutussa oli jo asennettuna ufw ja se oli aktivoitu.
+
+Seuraavaksi Debian:
+
+```
+tuuli@debian1:~$ sudo salt 'debiantesti2' state.apply
+debiantesti2:
+----------
+          ID: ufw
+    Function: pkg.installed
+      Result: True
+     Comment: The following packages were installed/updated: ufw
+     Started: 23:17:15.182649
+    Duration: 7181.184 ms
+     Changes:   
+              ----------
+              ufw:
+                  ----------
+                  new:
+                      0.36-7.1
+                  old:
+----------
+          ID: ufw enable
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw enable" run
+     Started: 23:17:22.368152
+    Duration: 1412.568 ms
+     Changes:   
+              ----------
+              pid:
+                  2393
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Firewall is active and enabled on system startup
+----------
+          ID: ufw allow 22/tcp
+    Function: cmd.run
+      Result: True
+     Comment: Command "ufw allow 22/tcp" run
+     Started: 23:17:23.780941
+    Duration: 140.389 ms
+     Changes:   
+              ----------
+              pid:
+                  2557
+              retcode:
+                  0
+              stderr:
+              stdout:
+                  Rule added
+                  Rule added (v6)
+----------
+          ID: openssh-server
+    Function: pkg.installed
+      Result: True
+     Comment: The following packages were installed/updated: openssh-server
+     Started: 23:17:23.921564
+    Duration: 3849.76 ms
+     Changes:   
+              ----------
+              libcbor0:
+                  ----------
+                  new:
+                      0.5.0+dfsg-2
+                  old:
+              libfido2-1:
+                  ----------
+                  new:
+                      1.6.0-2
+                  old:
+              openssh-client:
+                  ----------
+                  new:
+                      1:8.4p1-5
+                  old:
+              openssh-server:
+                  ----------
+                  new:
+                      1:8.4p1-5
+                  old:
+              openssh-sftp-server:
+                  ----------
+                  new:
+                      1:8.4p1-5
+                  old:
+----------
+          ID: /etc/ssh/sshd_config
+    Function: file.managed
+      Result: True
+     Comment: File /etc/ssh/sshd_config updated
+     Started: 23:17:27.772983
+    Duration: 44.34 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  +++ 
+                  @@ -1,123 +1,8 @@
+                  -#	$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+                  -
+                  -# This is the sshd server system-wide configuration file.  See
+                  -# sshd_config(5) for more information.
+                  -
+                  -# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+                  -
+                  -# The strategy used for options in the default sshd_config shipped with
+                  -# OpenSSH is to specify options with their default value where
+                  -# possible, but leave them commented.  Uncommented options override the
+                  -# default value.
+                  -
+                   Include /etc/ssh/sshd_config.d/*.conf
+                  -
+                  -#Port 22
+                  -#AddressFamily any
+                  -#ListenAddress 0.0.0.0
+                  -#ListenAddress ::
+                  -
+                  -#HostKey /etc/ssh/ssh_host_rsa_key
+                  -#HostKey /etc/ssh/ssh_host_ecdsa_key
+                  -#HostKey /etc/ssh/ssh_host_ed25519_key
+                  -
+                  -# Ciphers and keying
+                  -#RekeyLimit default none
+                  -
+                  -# Logging
+                  -#SyslogFacility AUTH
+                  -#LogLevel INFO
+                  -
+                  -# Authentication:
+                  -
+                  -#LoginGraceTime 2m
+                  -#PermitRootLogin prohibit-password
+                  -#StrictModes yes
+                  -#MaxAuthTries 6
+                  -#MaxSessions 10
+                  -
+                  -#PubkeyAuthentication yes
+                  -
+                  -# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+                  -#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
+                  -
+                  -#AuthorizedPrincipalsFile none
+                  -
+                  -#AuthorizedKeysCommand none
+                  -#AuthorizedKeysCommandUser nobody
+                  -
+                  -# For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
+                  -#HostbasedAuthentication no
+                  -# Change to yes if you don't trust ~/.ssh/known_hosts for
+                  -# HostbasedAuthentication
+                  -#IgnoreUserKnownHosts no
+                  -# Don't read the user's ~/.rhosts and ~/.shosts files
+                  -#IgnoreRhosts yes
+                  -
+                  -# To disable tunneled clear text passwords, change to no here!
+                  -#PasswordAuthentication yes
+                  -#PermitEmptyPasswords no
+                  -
+                  -# Change to yes to enable challenge-response passwords (beware issues with
+                  -# some PAM modules and threads)
+                  +Port 22
+                   ChallengeResponseAuthentication no
+                  -
+                  -# Kerberos options
+                  -#KerberosAuthentication no
+                  -#KerberosOrLocalPasswd yes
+                  -#KerberosTicketCleanup yes
+                  -#KerberosGetAFSToken no
+                  -
+                  -# GSSAPI options
+                  -#GSSAPIAuthentication no
+                  -#GSSAPICleanupCredentials yes
+                  -#GSSAPIStrictAcceptorCheck yes
+                  -#GSSAPIKeyExchange no
+                  -
+                  -# Set this to 'yes' to enable PAM authentication, account processing,
+                  -# and session processing. If this is enabled, PAM authentication will
+                  -# be allowed through the ChallengeResponseAuthentication and
+                  -# PasswordAuthentication.  Depending on your PAM configuration,
+                  -# PAM authentication via ChallengeResponseAuthentication may bypass
+                  -# the setting of "PermitRootLogin without-password".
+                  -# If you just want the PAM account and session checks to run without
+                  -# PAM authentication, then enable this but set PasswordAuthentication
+                  -# and ChallengeResponseAuthentication to 'no'.
+                   UsePAM yes
+                  -
+                  -#AllowAgentForwarding yes
+                  -#AllowTcpForwarding yes
+                  -#GatewayPorts no
+                   X11Forwarding yes
+                  -#X11DisplayOffset 10
+                  -#X11UseLocalhost yes
+                  -#PermitTTY yes
+                   PrintMotd no
+                  -#PrintLastLog yes
+                  -#TCPKeepAlive yes
+                  -#PermitUserEnvironment no
+                  -#Compression delayed
+                  -#ClientAliveInterval 0
+                  -#ClientAliveCountMax 3
+                  -#UseDNS no
+                  -#PidFile /var/run/sshd.pid
+                  -#MaxStartups 10:30:100
+                  -#PermitTunnel no
+                  -#ChrootDirectory none
+                  -#VersionAddendum none
+                  -
+                  -# no default banner path
+                  -#Banner none
+                  -
+                  -# Allow client to pass locale environment variables
+                   AcceptEnv LANG LC_*
+                  -
+                  -# override default of no subsystems
+                   Subsystem	sftp	/usr/lib/openssh/sftp-server
+                  -
+                  -# Example of overriding settings on a per-user basis
+                  -#Match User anoncvs
+                  -#	X11Forwarding no
+                  -#	AllowTcpForwarding no
+                  -#	PermitTTY no
+                  -#	ForceCommand cvs server
+----------
+          ID: sshd
+    Function: service.running
+      Result: True
+     Comment: Service sshd is already enabled, and is running
+     Started: 23:17:27.825310
+    Duration: 95.91 ms
+     Changes:   
+              ----------
+              sshd:
+                  True
+----------
+          ID: default_pkgs
+    Function: pkg.installed
+      Result: True
+     Comment: 4 targeted packages were installed/updated.
+     Started: 23:17:27.927249
+    Duration: 7284.111 ms
+     Changes:   
+              ----------
+              bash-completion:
+                  ----------
+                  new:
+                      1:2.11-2
+                  old:
+              git:
+                  ----------
+                  new:
+                      1:2.30.2-1
+                  old:
+              git-man:
+                  ----------
+                  new:
+                      1:2.30.2-1
+                  old:
+              liberror-perl:
+                  ----------
+                  new:
+                      0.17029-1
+                  old:
+              net-tools:
+                  ----------
+                  new:
+                      1.60+git20181103.0eebece-1
+                  old:
+              tree:
+                  ----------
+                  new:
+                      1.8.0-1+b1
+                  old:
+----------
+          ID: /etc/nanorc
+    Function: file.append
+      Result: True
+     Comment: Appended 2 lines
+     Started: 23:17:35.215604
+    Duration: 9.927 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  
+                  +++ 
+                  
+                  @@ -293,3 +293,5 @@
+                  
+                   #bind ^U undo main
+                   #bind ^E redo main
+                   #set multibuffer
+                  +set linenumbers
+                  +set softwrap
+----------
+          ID: /etc/firefox-esr/firefox-esr.js
+    Function: file.managed
+      Result: True
+     Comment: File /etc/firefox-esr/firefox-esr.js updated
+     Started: 23:17:35.225636
+    Duration: 35.667 ms
+     Changes:   
+              ----------
+              diff:
+                  --- 
+                  +++ 
+                  @@ -28,3 +28,21 @@
+                   // Default to no suggestions in the urlbar. This still brings a panel asking
+                   // the user whether they want to opt-in on first use.
+                   pref("browser.urlbar.suggest.searches", false);
+                  +
+                  +// Tracking off
+                  +pref("privacy.trackingprotection.enabled", true);
+                  +
+                  +// Asking to save psswds, autofill, suggestions and generation off
+                  +pref("signon.generation.enable", false);
+                  +pref("signon.rememberSignons", false);
+                  +pref("signon.autofillForms", false);
+                  +
+                  +// Removing bookmark bar: "Import bookmarks..."
+                  +pref("browser.bookmarks.addedImportButton", false);
+                  +
+                  +// Homepage DDG and new tabpage empty
+                  +pref("browser.startup.homepage", "https://duckduckgo.com");
+                  +pref("browser.newtabpage.enabled", false);
+                  +
+                  +//Don't show welcome-page during first run
+                  +pref("trailhead.firstrun.didSeeAboutWelcome", false);
+
+Summary for debiantesti2
+------------
+Succeeded: 9 (changed=9)
+Failed:    0
+------------
+Total states run:     9
+Total run time:  20.054 s
+```
+
+Tuloste oli jälleen pitkä, mutta ilokseni kaikki meni läpi ja etenkin Firefoxin asetukset olivat menneet oikein: Ubuntuun omansa ja Debianiin omansa. Seuraavaksi tarkistin manuaalisesti, miltä koneilta näytti. Aloitin Debianista:
+
+Avasin Debianin Firefoxin ensimmäiseksi:
+
+![Image](screenshots/H7_17.png)
+
+Heti selvisi, että welcome-sivu oli yrityksestäni huolimatta. Suljin ja avasin uudelleen:
+
+![Image](screenshots/H7_18.png)
+
+Toimi! Ainakin kotisivu oli vaihtunut. Lisäksi "Import bookmarks..." Ei näy kirjainmerkkipalkissa. 
+
+![Image](screenshots/H7_19.png)
+
+Asetuksissa harmikseni ei ollut valittuna "Do not Track" kohdassa "Always", mutta salasanojen kysyminen ja ehdottaminen oli poissa, vaikkakin tabi oli generoinnin kohdalla -se ei silti ollut voimassa.
+
+![Image](screenshots/H7_20.png) 
+
+Ufw asetukset näyttivät olevan oikein ja ssh toimi.
+
+![Image](screenshots/H7_21.png)
+
+Nanoon oli tullut lisäykset ja numerotkin näkyivät.
+
+Seuraavaksi Ubuntu:
+
+Ubuntussa oli sama kuin Debianissa, eli welcome-sivu tuli (en ehtinyt ottaa kuvaa), mutta uudelleen käynnistäessä toivottu kotisivu näkyi:
+
+![Image](screenshots/H7_22.png)
+
+Kirjainmerkkipalkki on myös poissa ja tyhjä.
+
+![Image](screenshots/H7_23.png)
+
+Samat vaivat kuin Debianissakin, tracking ei ole toivotussa kohdassa, mutta salasanat ovat toivitusti.
+
+![Image](screenshots/H7_24.png)
+
+Ufw oli toivotusti ja ssh toimi.
+
+![Image](screenshots/H7_25.png)
+
+Nanossa myöskin samat lisäykset ja toimi.
+
+Lisäksi testasin vielä molemmissa: Git, tree, bash completion, net-tools ja toimivat kuten pitkin.
+
+Testit menivät suhteellisen onnistuneesti läpi. Mitä ei toiminut toivotusti?
+
+* Firefox tracking off
+* Firefox firstrun off
